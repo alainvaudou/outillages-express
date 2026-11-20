@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>Portail Outillages Express</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #101215;
+        --surface: #1a1d21;
+        --surface-2: #23262c;
+        --ink: #eceef1;
+        --ink-soft: #a7adb8;
+        --line: #2e323a;
+        --accent: #f07020;
+        --accent-ink: #ffffff;
+        --accent-soft: #33200f;
+        --bar-bg: #0c0d10;
+        --bar-ink: #f2f3f5;
+        --bar-ink-soft: #9aa1ac;
+        --bar-line: #262a31;
+        --tab-active-bg: #e85d04;
+        --sil: #eae7e3;
+        --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+        --radius: 10px;
+      }
+
+      * { box-sizing: border-box; }
+      html { background: #101215; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+        overflow: hidden;
+      }
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      button { font: inherit; cursor: pointer; }
+      a { -webkit-tap-highlight-color: transparent; }
+      :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+      /* ---------- Barre du haut ---------- */
+      .topbar {
+        background: var(--bar-bg);
+        color: var(--bar-ink);
+        flex: 0 0 auto;
+      }
+      .topbar-row {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .55rem .9rem .45rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        min-width: 0;
+      }
+      .brand-mark {
+        flex: 0 0 auto;
+        width: 34px; height: 34px;
+        border-radius: 8px;
+        background: var(--accent);
+        display: grid;
+        place-items: center;
+      }
+      .brand-mark svg { width: 20px; height: 20px; fill: #fff; }
+      .brand-name {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-weight: 700;
+        font-size: 1.12rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+      .brand-sub {
+        display: block;
+        font-family: "Barlow", sans-serif;
+        font-weight: 500;
+        font-size: .72rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--bar-ink-soft);
+      }
+
+      /* ---------- Onglets ---------- */
+      .tabs-wrap {
+        border-top: 1px solid var(--bar-line);
+      }
+      .tabs {
+        display: flex;
+        gap: .35rem;
+        padding: .45rem .9rem .55rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        background: transparent;
+        color: var(--bar-ink-soft);
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: .42rem .85rem;
+        font-weight: 600;
+        font-size: .92rem;
+        white-space: nowrap;
+        min-height: 2.5rem;
+        text-decoration: none;
+      }
+      .tab svg { width: 16px; height: 16px; fill: currentColor; flex: 0 0 auto; }
+      .tab:hover { color: var(--bar-ink); background: rgba(255,255,255,.06); }
+      .tab.tab-home[aria-selected="true"] {
+        background: var(--tab-active-bg);
+        color: #fff;
+      }
+      /* ---------- Zone principale ---------- */
+      main {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .view { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+      .view.active { display: flex; }
+
+      /* ---------- Accueil ---------- */
+      .home {
+        overflow-y: auto;
+        padding: 1.4rem .9rem 2rem;
+      }
+      .home-inner { max-width: 1060px; margin: 0 auto; width: 100%; }
+      .home h1 {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-size: 1.55rem;
+        font-weight: 700;
+        margin: 0 0 .25rem;
+        letter-spacing: .01em;
+      }
+      .home .lede {
+        margin: 0 0 1.3rem;
+        color: var(--ink-soft);
+        font-size: 1rem;
+        max-width: 56ch;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: .9rem;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: .8rem;
+        text-align: center;
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: .8rem .8rem 1.05rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .card:hover { border-color: var(--accent); }
+      /* Tuiles : vraies photos officielles, traitement uniforme — même cadre 4:3, « cover » centré */
+      .card-photo {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .card-photo img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+      }
+      .card-name {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-weight: 700;
+        font-size: 1.22rem;
+        line-height: 1.15;
+      }
+      .home-note {
+        margin: 1.4rem 0 0;
+        color: var(--ink-soft);
+        font-size: .88rem;
+      }
+
+      /* ---------- Panneau d'ouverture ---------- */
+      .launch {
+        overflow-y: auto;
+        padding: 1.6rem .9rem 2rem;
+      }
+      .launch-inner {
+        max-width: 560px;
+        margin: 0 auto;
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 1.4rem;
+      }
+      .launch-icon {
+        width: 52px; height: 52px;
+        border-radius: 10px;
+        background: var(--accent-soft);
+        display: grid;
+        place-items: center;
+        margin-bottom: .9rem;
+        color: var(--sil);
+      }
+      .launch-icon svg { width: 28px; height: 28px; fill: currentColor; }
+      .launch-inner h2 {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin: 0 0 .3rem;
+        line-height: 1.15;
+      }
+      .launch-desc { margin: 0 0 .4rem; color: var(--ink-soft); font-size: .98rem; line-height: 1.45; }
+      .launch-meta { margin: 0 0 1.2rem; font-size: .8rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft); }
+      .btn-open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        width: 100%;
+        background: var(--accent);
+        color: var(--accent-ink);
+        border: 0;
+        border-radius: 8px;
+        padding: .8rem 1rem;
+        font-weight: 700;
+        font-size: 1.02rem;
+        text-decoration: none;
+        min-height: 3rem;
+        text-align: center;
+      }
+      .btn-open svg { width: 16px; height: 16px; fill: currentColor; flex: 0 0 auto; }
+      .launch-help {
+        margin: .8rem 0 0;
+        color: var(--ink-soft);
+        font-size: .9rem;
+        text-align: center;
+      }
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        margin-top: 1.2rem;
+        background: var(--surface-2);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: .45rem .8rem;
+        font-weight: 600;
+        font-size: .9rem;
+        min-height: 2.5rem;
+      }
+      .btn-back:hover { border-color: var(--accent); }
+
+      @media (max-width: 560px) {
+        .brand-sub { display: none; }
+        .brand-name { font-size: 1rem; }
+        .cards { grid-template-columns: repeat(2, 1fr); }
+        .card { padding: .55rem .55rem .85rem; gap: .6rem; }
+        .card-name { font-size: 1.08rem; }
+        .home h1 { font-size: 1.35rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.7 4.7C.5 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.4-2.4c.4-.4.4-1 0-1.4z"/></svg>
+          </span>
+          <span class="brand-name">Outillages Express<span class="brand-sub">Portail de l'équipe</span></span>
+        </div>
+      </div>
+      <div class="tabs-wrap">
+        <nav class="tabs" aria-label="Plateformes" id="tablist"></nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Accueil -->
+      <section class="view home active" id="view-home" aria-label="Accueil">
+        <div class="home-inner">
+          <h1>Toutes les plateformes du magasin, au même endroit</h1>
+          <p class="lede">Choisis un outil dans les onglets en haut — ou dans la liste ci-dessous. Chaque plateforme s'ouvre ici même, dans le même onglet. Pour revenir au portail, utilise le bouton « ← Retour au portail » de la plateforme : il rouvre le portail dans un nouvel onglet.</p>
+          <div class="cards" id="cards"></div>
+          <p class="home-note">Portail réservé à l'équipe du magasin.</p>
+        </div>
+      </section>
+
+      <!-- Panneau d'ouverture d'une plateforme -->
+      <section class="view launch" id="view-launch" aria-label="Ouverture de la plateforme">
+        <div class="launch-inner">
+          <span class="launch-icon" id="launchIcon" aria-hidden="true"></span>
+          <h2 id="launchName"></h2>
+          <p class="launch-desc" id="launchDesc"></p>
+          <p class="launch-meta" id="launchMeta"></p>
+          <a class="btn-open" id="launchOpen" href="#">
+            <span id="launchOpenLabel">Ouvrir la plateforme</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <p class="launch-help">La plateforme s'ouvre dans le même onglet. Pour revenir au portail, utilise le bouton « ← Retour au portail » de la plateforme : il rouvre le portail dans un nouvel onglet.</p>
+          <button class="btn-back" type="button" id="btnBack">← Tous les outils</button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      var PLATFORMS = [
+        {
+          id: "pieces",
+          tab: "Pièces",
+          name: "Recherche de pièces",
+          tile: "Recherche de pièces",
+          desc: "Trouve un nº de pièce ou un modèle en langage courant — toutes les marques du magasin, batteries et chargeurs inclus.",
+          meta: "2 195 modèles · 177 nº rapides",
+          photo: "assets/tile-pieces.jpg",
+          alt: "Bougie NGK et filtre à air Stihl",
+          url: "pieces/",
+          icon: '<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.41 9.76 L22.51 10.63 L22.51 13.37 L20.41 14.24 L19.53 16.36 L20.40 18.46 L18.46 20.40 L16.36 19.53 L14.24 20.41 L13.37 22.51 L10.63 22.51 L9.76 20.41 L7.64 19.53 L5.54 20.40 L3.60 18.46 L4.47 16.36 L3.59 14.24 L1.49 13.37 L1.49 10.63 L3.59 9.76 L4.47 7.64 L3.60 5.54 L5.54 3.60 L7.64 4.47 L9.76 3.59 L10.63 1.49 L13.37 1.49 L14.24 3.59 L16.36 4.47 L18.46 3.60 L20.40 5.54 L19.53 7.64 Z M8.90 12 a3.1 3.1 0 1 0 6.20 0 a3.1 3.1 0 1 0 -6.20 0 Z"/></svg>'
+        },
+        {
+          id: "guides",
+          tab: "Guides & chaînes",
+          name: "Guides & chaînes",
+          tile: "Guides & chaînes",
+          desc: "Référence croisée des guides et chaînes — Stihl, Oregon, Husqvarna et Echo — avec le nº de pièce pour chaque ensemble.",
+          meta: "83 fiches · 283 nº de guide",
+          photo: "assets/tile-guides.jpg",
+          alt: "Guide-chaîne Stihl avec sa chaîne montée",
+          url: "guides/",
+          icon: '<svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 7 L7.7 9.3 L9.1 7 L10.3 9.3 L11.7 7 L12.9 9.3 L14.3 7 L15.5 9.3 L16.9 7 L18.1 9.3 L19.2 8.4 C20.9 8.7 22.2 10.4 22.2 12.5 C22.2 15.3 20.5 17.6 18 17.6 L6 17.6 C3.5 17.6 1.8 15.3 1.8 12.5 C1.8 10.7 3 9.2 4.9 8.8 L6.4 7 Z M6.6 11.3 L17.4 11.3 A1.7 1.7 0 0 1 17.4 14.7 L6.6 14.7 A1.7 1.7 0 0 1 6.6 11.3 Z"/></svg>'
+        },
+        {
+          id: "clous",
+          tab: "Clous & agrafes",
+          name: "Clous & agrafes",
+          tile: "Clous & agrafes",
+          desc: "Compatibilité dans les deux sens : quel clou ou quelle agrafe va dans quel pistolet, et l'inverse.",
+          meta: "139 consommables · 378 pistolets · 9 marques",
+          photo: "assets/tile-clous.webp",
+          alt: "Cloueuse DeWalt DCN692",
+          url: "clous/",
+          icon: '<svg viewBox="0 0 24 24"><path d="M8.6 1.9 L14.2 1.9 L14.7 3.3 L8.2 3.3 Z M6.9 3.2 L14.7 3.3 Q16.6 3.4 16.9 5.2 L17.5 9.3 L13.6 11 L9.2 9.7 L6.4 6.7 Z M6.4 6.7 L9.2 9.7 L6.9 12.7 L4.2 11.3 L5.1 7.9 Z M5.3 11.3 L8.7 10.2 L11.9 19.3 Q12.2 20.3 11.2 20.6 L9.9 20.9 Q9 21.1 8.7 20.2 Z M11.7 11.3 L13.1 13.3 L11.6 14.2 L10.8 12.1 Z M13.6 9.5 L16.7 10.6 L18.4 15.5 Q18.7 16.7 17.6 17 L16 17.3 Q15 17.5 14.7 16.5 L12.6 11.4 Z M15.6 15.2 C16.3 17.3 17.7 18.3 19.2 18 C20.6 17.7 21.9 18.6 21.4 19.8 C20.9 21.1 19.1 21.6 16.6 21.2 C13.2 20.7 9.6 22.2 6.2 21.7 C4.3 21.4 3 21 2.3 20.3 L3 19 C3.8 19.7 5.2 20.1 6.7 20.3 C9.9 20.7 13.3 19.3 16.3 19.8 C17.9 20 19.1 19.7 19.4 19 C19.7 18.3 18.8 17.5 17.7 17.7 C16.5 17.9 15.5 17 14.9 15.7 Z"/></svg>'
+        },
+        {
+          id: "plowfinder",
+          tab: "PlowFinder",
+          name: "PlowFinder — Sélecteur de souffleuse",
+          tile: "PlowFinder",
+          desc: "Trouve la bonne souffleuse pour un client : questionnaire en 4 questions, recherche par marque et promotions du Québec.",
+          meta: "76 modèles · Ariens · Toro · Cub Cadet · Ducar",
+          photo: "assets/tile-plowfinder.jpg",
+          alt: "Souffleuse Toro Power Max HD 828 OAE",
+          url: "plowfinder/",
+          icon: '<svg viewBox="0 0 24 24"><path d="M2 21.5 L2 13.6 Q2 11.9 3.7 11.9 L7.4 11.9 Q9.8 11.9 9.8 14.3 L9.8 21.5 Z"/><path d="M8.4 19.2 L8.4 12.2 L17.4 12.2 L17.4 19.2 Z"/><path d="M10.3 12.6 L10.7 6.8 L11.9 3.9 L16.1 3.9 L14.8 6.8 L14.3 12.6 Z"/><path d="M15.9 11.8 L21 3.4 Q21.5 2.6 22.3 3 L22.5 3.2 Q23.1 3.7 22.7 4.5 L17.8 12.6 Z"/><path fill-rule="evenodd" d="M12.75 18.5 a3.05 3.05 0 1 0 6.1 0 a3.05 3.05 0 1 0 -6.1 0 Z M14.8 18.5 a1 1 0 1 0 2 0 a1 1 0 1 0 -2 0 Z"/></svg>'
+        },
+        {
+          id: "comparatif",
+          tab: "Souffleuses 26-27",
+          name: "Comparatif souffleuses 2026-2027",
+          tile: "Comparatif souffleuses",
+          desc: "Toutes les gammes canadiennes 2026-2027 côte à côte, par marque, avec la photo et le nº de modèle de chaque machine.",
+          meta: "83 modèles · Ariens · Toro · Cub Cadet · Ducar",
+          photo: "assets/tile-comparatif.jpg",
+          alt: "Deux souffleuses, une Ariens devant une Toro",
+          url: "comparatif/",
+          icon: '<svg viewBox="0 0 24 24"><g transform="translate(0,2.6) scale(0.52)"><path d="M2 21.5 L2 13.6 Q2 11.9 3.7 11.9 L7.4 11.9 Q9.8 11.9 9.8 14.3 L9.8 21.5 Z"/><path d="M8.4 19.2 L8.4 12.2 L17.4 12.2 L17.4 19.2 Z"/><path d="M10.3 12.6 L10.7 6.8 L11.9 3.9 L16.1 3.9 L14.8 6.8 L14.3 12.6 Z"/><path d="M15.9 11.8 L21 3.4 Q21.5 2.6 22.3 3 L22.5 3.2 Q23.1 3.7 22.7 4.5 L17.8 12.6 Z"/><path fill-rule="evenodd" d="M12.75 18.5 a3.05 3.05 0 1 0 6.1 0 a3.05 3.05 0 1 0 -6.1 0 Z M14.8 18.5 a1 1 0 1 0 2 0 a1 1 0 1 0 -2 0 Z"/></g><g transform="translate(11.9,2.6) scale(0.52)"><path d="M2 21.5 L2 13.6 Q2 11.9 3.7 11.9 L7.4 11.9 Q9.8 11.9 9.8 14.3 L9.8 21.5 Z"/><path d="M8.4 19.2 L8.4 12.2 L17.4 12.2 L17.4 19.2 Z"/><path d="M10.3 12.6 L10.7 6.8 L11.9 3.9 L16.1 3.9 L14.8 6.8 L14.3 12.6 Z"/><path d="M15.9 11.8 L21 3.4 Q21.5 2.6 22.3 3 L22.5 3.2 Q23.1 3.7 22.7 4.5 L17.8 12.6 Z"/><path fill-rule="evenodd" d="M12.75 18.5 a3.05 3.05 0 1 0 6.1 0 a3.05 3.05 0 1 0 -6.1 0 Z M14.8 18.5 a1 1 0 1 0 2 0 a1 1 0 1 0 -2 0 Z"/></g></svg>'
+        }
+      ];
+
+      var ICON_HOME = '<svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-9H1l9-8z" transform="translate(1,0)"/></svg>';
+
+      var tablist = document.getElementById("tablist");
+      var cardsBox = document.getElementById("cards");
+      var viewHome = document.getElementById("view-home");
+      var viewLaunch = document.getElementById("view-launch");
+      var homeTab = null;
+
+      function showHome() {
+        viewLaunch.classList.remove("active");
+        viewHome.classList.add("active");
+        if (homeTab) homeTab.setAttribute("aria-selected", "true");
+        viewHome.scrollTop = 0;
+      }
+
+      function showLaunch(p) {
+        document.getElementById("launchIcon").innerHTML = p.icon;
+        document.getElementById("launchName").textContent = p.name;
+        document.getElementById("launchDesc").textContent = p.desc;
+        document.getElementById("launchMeta").textContent = p.meta;
+        var open = document.getElementById("launchOpen");
+        open.href = p.url;
+        open.target = "_self";
+        open.rel = "noopener";
+        document.getElementById("launchOpenLabel").textContent = "Ouvrir — " + p.name;
+        viewHome.classList.remove("active");
+        viewLaunch.classList.add("active");
+        if (homeTab) homeTab.setAttribute("aria-selected", "false");
+        viewLaunch.scrollTop = 0;
+      }
+
+      // Onglet Accueil (vue interne)
+      homeTab = document.createElement("button");
+      homeTab.className = "tab tab-home";
+      homeTab.type = "button";
+      homeTab.setAttribute("aria-selected", "true");
+      homeTab.innerHTML = ICON_HOME + "<span></span>";
+      homeTab.querySelector("span").textContent = "Accueil";
+      homeTab.addEventListener("click", showHome);
+      tablist.appendChild(homeTab);
+
+      PLATFORMS.forEach(function (p) {
+        // Onglet : un vrai lien vers la plateforme, naviguant dans le cadre courant
+        // (target="_self") — le clic natif est le seul mécanisme.
+        var t = document.createElement("a");
+        t.className = "tab";
+        t.href = p.url;
+        t.target = "_self";
+        t.rel = "noopener";
+        t.innerHTML = p.icon + "<span></span>";
+        t.querySelector("span").textContent = p.tab;
+        tablist.appendChild(t);
+
+        // Tuile d'accueil : vraie photo officielle + nom court, même lien que l'onglet (cadre courant)
+        var card = document.createElement("a");
+        card.className = "card";
+        card.href = p.url;
+        card.target = "_self";
+        card.rel = "noopener";
+        card.innerHTML =
+          '<span class="card-photo"><img src="' + p.photo + '" alt="' + p.alt + '" loading="lazy"></span>' +
+          '<span class="card-name"></span>';
+        card.querySelector(".card-name").textContent = p.tile;
+        cardsBox.appendChild(card);
+      });
+
+      document.getElementById("btnBack").addEventListener("click", showHome);
+    </script>
+  </body>
+</html>

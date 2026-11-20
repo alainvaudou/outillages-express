@@ -1,0 +1,1446 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>PlowFinder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* Thème noir permanent (demande d'Alain, 2026-11-20 : « Tout en thème
+     noir » sur toutes les plateformes) : la palette sombre est appliquée
+     en tout temps, sans suivre le réglage clair/sombre de l'appareil —
+     même forme que le portail, Clous & Agrafes et Guides & chaînes. */
+  :root{
+    color-scheme: dark;
+    --bg:#0f151b;
+    --surface:#182129;
+    --surface2:#1e2934;
+    --ink:#e9eff4;
+    --ink-soft:#a9b8c4;
+    --line:#2c3a46;
+    --accent:#f0662a;
+    --accent-ink:#ffffff;
+    --accent-soft:#3a2317;
+    --navy:#0c141c;
+    --navy-ink:#eef3f7;
+    --ok:#4fc07c;
+    --warn-bg:#2e2410;
+    --warn-line:#8a6d1f;
+    --warn-ink:#f0d48a;
+    --shadow:0 10px 28px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:17px; line-height:1.45;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:20px 16px 48px}
+  h1,h2,h3{font-family:"Barlow Condensed","Barlow",sans-serif; letter-spacing:.01em; margin:0}
+  /* ---------- intro ---------- */
+  .intro{
+    background:var(--navy); color:var(--navy-ink);
+    border-radius:10px; padding:22px 22px 18px; margin-bottom:18px;
+  }
+  .intro h1{font-size:2rem; font-weight:700; line-height:1.05; text-transform:uppercase}
+  .intro p{margin:8px 0 0; color:#c6d3dd; max-width:62ch}
+  .intro p strong{color:#fff}
+  /* ---------- questions ---------- */
+  form{display:grid; gap:14px}
+  fieldset{
+    border:1px solid var(--line); border-radius:10px; background:var(--surface);
+    padding:16px; margin:0; box-shadow:var(--shadow);
+  }
+  legend{
+    font-family:"Barlow Condensed",sans-serif; font-size:1.3rem; font-weight:600;
+    padding:0 6px; margin-left:-6px;
+  }
+  legend .qnum{
+    display:inline-block; background:var(--accent); color:var(--accent-ink);
+    border-radius:6px; padding:0 8px; margin-right:8px; font-weight:700;
+  }
+  .opts{display:grid; gap:10px; margin-top:6px}
+  @media (min-width:640px){ .opts{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))} }
+  .opt{position:relative; display:block}
+  .opt input{
+    position:absolute; top:14px; left:14px; width:22px; height:22px; margin:0;
+    accent-color:var(--accent); cursor:pointer; z-index:2; flex:none;
+  }
+  .opt .card{
+    display:block; height:100%; border:2px solid var(--line); border-radius:8px;
+    background:var(--surface2); padding:12px 14px 12px 46px; cursor:pointer;
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .opt .card b{display:block; font-size:1.06rem}
+  .opt .card span{display:block; color:var(--ink-soft); font-size:.92rem; margin-top:2px}
+  .opt input:checked + .card{border-color:var(--accent); background:var(--accent-soft)}
+  .opt input:focus-visible + .card{outline:3px solid var(--accent); outline-offset:2px}
+  .actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+  button{
+    font:inherit; font-weight:600; border-radius:8px; cursor:pointer;
+    padding:12px 20px; border:2px solid transparent;
+  }
+  #goBtn{background:var(--accent); color:var(--accent-ink); font-size:1.05rem}
+  #goBtn:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed}
+  #resetBtn{background:transparent; color:var(--ink); border-color:var(--line)}
+  .hint{color:var(--ink-soft); font-size:.95rem; margin:0}
+  /* ---------- résultat ---------- */
+  #result{margin-top:22px; display:none}
+  #result.show{display:block}
+  .result-head{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px}
+  .result-head h2{font-size:1.7rem; font-weight:700; text-transform:uppercase}
+  .sub-head{font-size:1.35rem; font-weight:700; text-transform:uppercase; margin:22px 0 10px}
+  .chip{
+    background:var(--surface); border:1px solid var(--line); border-radius:999px;
+    padding:3px 12px; font-size:.9rem; color:var(--ink-soft);
+  }
+  .chip b{color:var(--ink)}
+  .pick{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .pick + .pick{margin-top:14px}
+  .pick-grid{display:grid}
+  @media (min-width:680px){ .pick-grid{grid-template-columns:340px 1fr} }
+  .pick-photo{background:#fff; display:flex; align-items:center; justify-content:center; padding:14px}
+  .pick-photo img{width:100%; max-height:320px; object-fit:contain; display:block}
+  .pick-body{padding:18px 20px 20px}
+  .pick-tag{
+    display:inline-block; font-family:"Barlow Condensed",sans-serif; font-weight:600;
+    letter-spacing:.06em; text-transform:uppercase; font-size:.95rem;
+    background:var(--accent); color:var(--accent-ink); border-radius:5px; padding:2px 10px;
+  }
+  .pick.alt .pick-tag{background:var(--navy); color:var(--navy-ink)}
+  .pick-body h3{font-size:1.9rem; font-weight:700; line-height:1.1; margin-top:8px}
+  .badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .badge{
+    border:1px solid var(--line); background:var(--surface2); border-radius:6px;
+    padding:3px 10px; font-size:.92rem; font-weight:600;
+  }
+  .badge.energy-gas{border-color:#c96a2c; }
+  .badge.energy-batt{border-color:var(--ok)}
+  dl.facts{margin:14px 0 0; display:grid; gap:6px}
+  dl.facts div{display:grid; grid-template-columns:150px 1fr; gap:8px}
+  dl.facts dt{color:var(--ink-soft); font-size:.93rem}
+  dl.facts dd{margin:0; font-weight:500}
+  .why{margin-top:14px; color:var(--ink-soft)}
+  .why b{color:var(--ink)}
+  .price-note{
+    margin-top:14px; font-weight:700; font-size:1.02rem;
+    border-top:1px dashed var(--line); padding-top:12px;
+  }
+  .price-note span{color:var(--accent)}
+  .caveat{
+    margin-top:14px; background:var(--warn-bg); border:1px solid var(--warn-line);
+    border-radius:10px; padding:16px 18px; color:var(--warn-ink);
+  }
+  .caveat h3{font-size:1.25rem; margin-bottom:6px; color:inherit}
+  .caveat p{margin:6px 0}
+  .unknown{
+    margin-top:12px; font-size:.94rem; color:var(--ink-soft);
+    border-left:4px solid var(--line); padding-left:12px;
+  }
+  /* ---------- gamme + promos ---------- */
+  details.lineup, section.promos{
+    margin-top:26px; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:6px 16px 14px; box-shadow:var(--shadow);
+  }
+  details.lineup summary{
+    cursor:pointer; font-family:"Barlow Condensed",sans-serif; font-size:1.3rem;
+    font-weight:600; padding:10px 0;
+  }
+  details.lineup summary:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  section.promos h2{font-size:1.3rem; font-weight:600; padding:10px 0 4px}
+  .promo{border-top:1px solid var(--line); padding:10px 0 4px}
+  .promo h3{font-size:1.1rem; margin-bottom:4px}
+  .promo p{margin:4px 0; color:var(--ink-soft); font-size:.95rem}
+  .promo p b{color:var(--ink)}
+  .brand-group h3{font-size:1.2rem; margin:16px 0 8px; text-transform:uppercase}
+  .models{display:grid; gap:8px}
+  @media (min-width:680px){ .models{grid-template-columns:1fr 1fr} }
+  .model-row{
+    display:flex; gap:12px; align-items:center; background:var(--surface2);
+    border:1px solid var(--line); border-radius:8px; padding:8px 10px;
+  }
+  .model-row img{width:64px; height:64px; object-fit:contain; background:#fff; border-radius:6px; flex:none}
+  .model-row .m-name{font-weight:700; line-height:1.2}
+  .model-row .m-desc{color:var(--ink-soft); font-size:.88rem; line-height:1.3}
+  footer{margin-top:26px; color:var(--ink-soft); font-size:.92rem}
+  /* ---------- onglets de navigation ---------- */
+  .viewtabs{display:flex; gap:8px; margin-bottom:16px}
+  .viewtabs button{
+    flex:1; min-width:0; background:var(--surface); color:var(--ink); border:2px solid var(--line);
+    font-family:"Barlow Condensed",sans-serif; font-size:1.2rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:.03em; padding:10px 8px;
+  }
+  @media (max-width:560px){
+    .viewtabs{flex-wrap:wrap}
+    .viewtabs button{flex:1 1 42%; font-size:1.05rem; letter-spacing:.01em; padding:10px 4px}
+  }
+  .viewtabs button[aria-selected="true"]{background:var(--navy); color:var(--navy-ink); border-color:var(--navy)}
+  .viewtabs button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  /* ---------- vue par marque ---------- */
+  .brandchips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px}
+  .brandchips button{
+    background:var(--surface); color:var(--ink); border:2px solid var(--line);
+    padding:9px 16px; font-size:1rem;
+  }
+  .brandchips button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+  .brandchips button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .brand-grid{display:grid; gap:12px}
+  @media (min-width:640px){ .brand-grid{grid-template-columns:1fr 1fr} }
+  @media (min-width:960px){ .brand-grid{grid-template-columns:1fr 1fr 1fr} }
+  .bcard{
+    text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    box-shadow:var(--shadow); overflow:hidden; padding:0; width:100%; color:var(--ink);
+  }
+  .bcard:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .bcard .b-photo{background:#fff; padding:10px; display:flex; align-items:center; justify-content:center}
+  .bcard .b-photo img{width:100%; height:170px; object-fit:contain; display:block}
+  .bcard .b-body{padding:12px 14px 14px}
+  .bcard .b-name{font-family:"Barlow Condensed",sans-serif; font-size:1.45rem; font-weight:700; line-height:1.1}
+  .bcard .b-meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+  .bcard .b-open{margin-top:10px; font-weight:700; color:var(--accent); font-size:.95rem}
+  .bcard .b-body{display:block}
+  .bcard .b-name{display:block}
+  .bcard .b-open{display:block}
+  .brandchips button[data-brand="Ducar"][aria-pressed="true"]{background:#F6A85C; border-color:#F6A85C; color:#241505}
+  .brand-group.brand-ducar h3{border-left:6px solid #F6A85C; padding-left:10px}
+  /* ---------- vue promotions ---------- */
+  .bcard .b-promo{
+    display:block; margin-top:10px; background:var(--accent-soft);
+    border:1px solid var(--accent); border-radius:6px; padding:8px 10px;
+    font-size:.9rem; text-align:left;
+  }
+  .bcard .b-promo b{display:block; font-size:.95rem; color:var(--ink)}
+  .bcard .b-promo span{display:block; margin-top:2px; color:var(--ink-soft)}
+  .promo-group h3{font-size:1.2rem; margin:16px 0 8px; text-transform:uppercase}
+  /* ---------- fiche détaillée ---------- */
+  .sheet{
+    position:fixed; inset:0; z-index:50; background:var(--bg); overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sheet[hidden]{display:none}
+  .sheet-inner{max-width:820px; margin:0 auto; padding:0 16px 48px}
+  .sheet-bar{
+    position:sticky; top:0; z-index:2; background:var(--bg); padding:12px 0;
+    display:flex; align-items:center; gap:12px;
+  }
+  #sheetBack{
+    background:var(--navy); color:var(--navy-ink); border-color:var(--navy);
+    font-size:1.02rem; padding:11px 18px;
+  }
+  #sheetBack:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .sheet-card{background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); overflow:hidden}
+  .sheet-photo{background:#fff; display:flex; align-items:center; justify-content:center; padding:16px}
+  .sheet-photo img{width:100%; max-height:340px; object-fit:contain; display:block}
+  /* Photo de secours : si une image ne charge pas, une tuile propre la remplace
+     au lieu du glyphe d'image brisée du navigateur. */
+  .ph-fallback{display:flex; align-items:center; justify-content:center; background:var(--surface2); color:var(--ink-soft); font-weight:600; text-align:center; padding:10px; border-radius:6px}
+  .bcard .b-photo .ph-fallback{width:100%; height:170px}
+  .pick-photo .ph-fallback{width:100%; min-height:200px}
+  .sheet-photo .ph-fallback{width:100%; min-height:220px}
+  .model-row .ph-fallback{width:64px; height:64px; flex:none; font-size:12px; padding:4px}
+  .sheet-body{padding:20px 20px 24px}
+  .sheet-body h2{font-size:2rem; font-weight:700; line-height:1.08}
+  .sheet-sec{margin-top:22px}
+  .sheet-sec h3{
+    font-size:1.3rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
+    border-bottom:2px solid var(--accent); padding-bottom:5px; margin-bottom:10px;
+  }
+  dl.facts.wide div{grid-template-columns:170px 1fr}
+  @media (max-width:520px){ dl.facts div, dl.facts.wide div{grid-template-columns:128px 1fr} }
+  .sheet-promo{color:var(--ink-soft); margin:6px 0}
+  .sheet-promo b{color:var(--ink)}
+  .pick .fiche-btn, .model-row .fiche-btn{
+    background:transparent; color:var(--accent); border:2px solid var(--accent);
+    padding:8px 14px; font-size:.95rem; margin-top:14px;
+  }
+  .model-row{cursor:pointer}
+  .model-row .m-open{margin-left:auto; color:var(--accent); font-weight:700; font-size:.9rem; flex:none}
+  /* ---------- barre retour (page) ---------- */
+  .pagebar{
+    position:sticky; top:0; z-index:30; background:var(--bg);
+    display:flex; align-items:center; gap:12px; padding:10px 0 12px; margin-bottom:14px;
+  }
+  #pageBack{
+    background:#ffffff; color:#0b6e4f; border:2px solid #0b6e4f;
+    font-family:inherit; font-size:15px; font-weight:600; padding:10px 18px; flex:none;
+    border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; cursor:pointer;
+  }
+  #pageBack:hover{background:#0b6e4f; color:#ffffff}
+  #pageBack:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+  .pagebar .hint{margin:0}
+</style>
+</head>
+<body>
+<script>
+/* Filet de sécurité photos : au premier échec de chargement, on réessaie une
+   fois en contournant le cache ; si l'image reste introuvable, on la remplace
+   par une tuile propre au nom du modèle plutôt que l'icône d'image brisée. */
+document.addEventListener("error", function(ev){
+  var t = ev.target;
+  if (!t || t.tagName !== "IMG") return;
+  if (!t.dataset.imgRetried) {
+    t.dataset.imgRetried = "1";
+    var src = t.getAttribute("src") || "";
+    if (src) t.src = src + (src.indexOf("?") === -1 ? "?" : "&") + "r=1";
+    return;
+  }
+  var label = (t.getAttribute("alt") || "Photo").replace(/^Photo de la souffleuse\s*/i, "");
+  var span = document.createElement("span");
+  span.className = "ph-fallback";
+  span.textContent = label;
+  if (t.parentNode) t.parentNode.replaceChild(span, t);
+}, true);
+</script>
+<main class="wrap">
+
+  <div class="pagebar">
+    <a id="pageBack" rel="noopener" href="../">← Retour au portail</a>
+    <span class="hint">Retour au portail Outillages Express</span>
+  </div>
+
+  <section class="intro">
+    <h1>PlowFinder</h1>
+    <p>Quatre questions, <strong>trois modèles proposés</strong> — un par marque (Toro, Ariens, Cub Cadet, Ducar)
+    quand la classe requise le permet. Le choix se fait uniquement parmi les
+    <strong>76 souffleuses Ariens, Toro, Cub Cadet et Ducar</strong> des gammes officielles vérifiées —
+    mêmes réponses, mêmes modèles, à tout coup. Vous préférez choisir vous-même ?
+    L'onglet <strong>Par marque</strong> montre tous les modèles d'une marque, l'onglet
+    <strong>Promotions</strong> ne montre que les modèles avec une promotion en cours au Québec,
+    et un clic sur n'importe quel modèle ouvre sa <strong>fiche détaillée</strong>.</p>
+  </section>
+
+  <nav class="viewtabs" aria-label="Mode de navigation">
+    <button type="button" id="tabQuiz" aria-selected="true">Questionnaire</button>
+    <button type="button" id="tabBrand" aria-selected="false">Par marque</button>
+    <button type="button" id="tabPromo" aria-selected="false">Promotions</button>
+  </nav>
+
+  <div id="viewQuiz">
+  <form id="picker" novalidate>
+    <fieldset>
+      <legend><span class="qnum">1</span>Longueur de l'entrée</legend>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="driveway" value="0" />
+          <span class="card"><b>Moins de 40 pi</b><span>Petite entrée, un ou deux véhicules</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="driveway" value="1" />
+          <span class="card"><b>40 à 80 pi</b><span>Entrée moyenne de maison unifamiliale</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="driveway" value="2" />
+          <span class="card"><b>Plus de 80 pi</b><span>Longue entrée, cour ou accès partagé</span></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="qnum">2</span>Tempêtes typiques</legend>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="storm" value="0" />
+          <span class="card"><b>Moins de 10 po</b><span>La plupart des bordées restent légères à modérées</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="storm" value="1" />
+          <span class="card"><b>10 po et plus</b><span>Grosse bordée ou banc de neige de déneigeur à affronter</span></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="qnum">3</span>Budget</legend>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="budget" value="0" />
+          <span class="card"><b>Moins de 1 000 $</b><span>Classe une phase</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="budget" value="1" />
+          <span class="card"><b>1 000 à 2 000 $</b><span>Jusqu'à la classe deux phases</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="budget" value="2" />
+          <span class="card"><b>Plus de 2 000 $</b><span>Jusqu'à la classe professionnelle</span></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="qnum">4</span>Surface et pente de l'entrée</legend>
+      <div class="opts">
+        <label class="opt">
+          <input type="radio" name="surface" value="0" />
+          <span class="card"><b>Asphalte ou pavé, plat</b><span>Surface dure et à niveau</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="surface" value="1" />
+          <span class="card"><b>Gravier</b><span>Entrée en pierre concassée ou en terre</span></span>
+        </label>
+        <label class="opt">
+          <input type="radio" name="surface" value="2" />
+          <span class="card"><b>Pente</b><span>Entrée inclinée, montée ou descente</span></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="goBtn" disabled>Voir mes 3 modèles</button>
+      <button type="button" id="resetBtn">Recommencer</button>
+      <p class="hint" id="formHint">Répondez aux quatre questions pour obtenir vos trois modèles.</p>
+    </div>
+  </form>
+
+  <section id="result" aria-live="polite"></section>
+  </div>
+
+  <div id="viewBrand" hidden>
+    <div class="brandchips" role="group" aria-label="Choisir une marque">
+      <button type="button" data-brand="Ariens" aria-pressed="true">Ariens</button>
+      <button type="button" data-brand="Toro" aria-pressed="false">Toro</button>
+      <button type="button" data-brand="Cub Cadet" aria-pressed="false">Cub Cadet</button>
+      <button type="button" data-brand="Ducar" aria-pressed="false">Ducar</button>
+    </div>
+    <p class="hint" id="brandCount" style="margin-bottom:12px"></p>
+    <div class="brand-grid" id="brandGrid"></div>
+  </div>
+
+  <div id="viewPromo" hidden>
+    <p class="hint" id="promoIntro" style="margin-bottom:12px"></p>
+    <div id="promoBody"></div>
+  </div>
+
+  <details class="lineup">
+    <summary>La gamme complète utilisée par PlowFinder (76 modèles)</summary>
+    <p class="hint">Ce sont les seuls modèles que PlowFinder peut recommander — Ariens, Toro, Cub Cadet et Ducar,
+    avec leurs vraies photos. Cliquez un modèle pour ouvrir sa fiche détaillée.
+    Aucun prix n'est affiché : <b>prix à confirmer en magasin</b>.
+    Toutes les specs affichées (moteur, portée, performance, poids, garantie) proviennent des publications
+    officielles des fabricants (pages et brochures officielles, divisions canadiennes pour les garanties) ;
+    les 76 modèles figurent dans les gammes officielles de leur fabricant (2026 ; 2026-2027 pour Ducar). Quand un fabricant ne publie pas une donnée,
+    la fiche l'indique — jamais de valeur devinée, estimée ou convertie.</p>
+    <div id="lineupBody"></div>
+    <p class="hint" style="margin-top:12px"><b>Sources officielles consultées le 2026-10-22</b> :
+    <a href="https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/compact">Ariens — gamme Compact</a>,
+    <a href="https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe">Ariens — gamme Deluxe</a>,
+    <a href="https://www.ariens.com/getattachment/15b24627-f0cf-4490-8b77-44413c176d72/24-25-ariens-snow-full-line-lit_printable.pdf">Ariens — brochure officielle gamme complète 2026 (portées et gamme)</a>,
+    <a href="https://www.ariens.eu/ie/product/hydro-pro-32-rapidtrak-kraken-edition/">Ariens Europe — Kraken 926520 (couple 21,0 lb-pi et 13,1 HP publiés par Ariens)</a>,
+    <a href="https://lctusa.com/product/stormforce-306/306cc-storm-force-lct-engine/">LCT (fabricant des moteurs Ariens AX) — gamme StormForce</a>,
+    <a href="https://www.toro.com/en/product/37799">Toro — Power Max 826 OAE</a> et les pages produit officielles toro.com / toro.com/en-ca des 11 autres modèles Toro,
+    <a href="https://www.cubcadet.ca/en/snow-blowers/2x-28-hd-snow-blower/31AH5LVNB10.html">Cub Cadet Canada — 2X 28 HD (moteur 890-WU, 420 cc, garantie canadienne)</a>,
+    <a href="https://www.cubcadet.com/en_US/product-information/power-up-for-winter-with-intellipower.html">Cub Cadet — page officielle IntelliPower</a> et les fiches techniques officielles Cub Cadet des autres modèles.
+    Portées Cub Cadet : Cub Cadet ne publie aucune portée dans ses tableaux de specs — les valeurs affichées sont celles
+    énoncées par Cub Cadet dans ses textes officiels de modèles ; plusieurs modèles 2X/3X n'en publient aucune.
+    Ajouts d'exhaustivité (2026-10-22) : gammes complètes revues modèle par modèle contre les sources officielles —
+    <a href="https://www.ariens.com/en-ca/power-equipment/snow-products/snow-blowers/classic">Ariens — série Classic</a>,
+    <a href="https://www.ariens.com/en-ca/power-equipment/snow-products/snow-blowers/deluxe">Ariens — série Deluxe</a> et le
+    catalogue officiel Ariens gamme complète (S18, Path-Pro, Professional 21, Platinum, Professional et éditions
+    Alpine/Mountaineering), <a href="https://www.toro.com/en/homeowner/snow-blowers/snow-master">Toro — page SnowMaster et son tableau comparatif officiel</a>
+    et le guide produit officiel Toro (Power Clear, Power Max, Power Max HD),
+    le guide de sélection officiel Cub Cadet (séries 1X/2X/3X) et les fiches cubcadet.ca des modèles ajoutés.
+    Ducar (MTI Canada) : <a href="https://ducar.ca/products/duesb721_fr">fiches officielles ducar.ca</a> de chaque modèle —
+    gamme canadienne 2026-2027 vérifiée modèle par modèle le 2026-11-16 (même recensement que le Comparatif souffleuses).</p>
+  </details>
+
+  <section class="promos" aria-label="Promotions des fabricants au Québec">
+    <h2>Promotions des fabricants — Québec</h2>
+    <div class="promo">
+      <h3>Toro</h3>
+      <p><b>Remise postale de 20 $</b> à l'achat d'un <b>deuxième</b> produit 60V Flex-Force admissible
+      (les souffleuses 60V de la gamme — Power Clear e21, SnowMaster 60V, Power Max e24 et e26 — sont admissibles).
+      Achats du <b>1<sup>er</sup> janvier au 31 octobre 2026</b>, demande postée au plus tard le <b>30 novembre 2026</b> ;
+      offre valide aux États-Unis et au Canada, <b>le Québec n'est pas exclu</b> des termes officiels ; non cumulable
+      avec d'autres offres Toro ; les deux reçus et les numéros de modèle/série sont requis.
+      La devise du 20 $ n'est pas précisée dans les termes officiels. <b>Vérifié le 2026-10-22</b> —
+      <a href="https://cdn2.toro.com/en/-/media/Files/Toro/Homeowner/landing-pages/loyality/60V-Rebate-Terms-and-Conditions-2026.ashx?la=en&hash=CCCE34D6ACE4732C849EB68A052BFAA01DE78818">termes officiels Toro (PDF)</a>.</p>
+      <p><b>Financement Flexiti « sur place »</b> chez les détaillants Toro participants du Québec : plans à
+      <b>versements mensuels égaux sans intérêt</b> (sur approbation du crédit), montant minimal 500 $,
+      frais annuels de 39,99 $ ; les plans à paiements différés ne sont pas offerts aux résidents du Québec.
+      Aucune date de fin publiée. <b>Vérifié le 2026-10-22</b> —
+      <a href="https://www.toro.com/en-ca/shared-components/finance-promotions/canada/on-the-spot-credit">page officielle Toro Canada (résidents du Québec)</a>.</p>
+    </div>
+    <div class="promo">
+      <h3>Ariens</h3>
+      <p>Aucune promotion en cours au Québec (vérifié le 2026-10-22 sur les sources canadiennes officielles d'Ariens).</p>
+    </div>
+    <div class="promo">
+      <h3>Cub Cadet</h3>
+      <p>Aucune promotion en cours au Québec (vérifié le 2026-10-22 sur cubcadet.ca ; le seul programme de
+      financement repéré est américain et expiré depuis le 2025-02-28 — il ne s'applique pas au Québec).</p>
+    </div>
+    <div class="promo">
+      <h3>Ducar</h3>
+      <p>Aucune promotion en cours au Québec (aucune promotion fabricant relevée sur ducar.ca lors du
+      recensement de la gamme canadienne 2026-2027, le 2026-11-16).</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Classes de PlowFinder : une phase · deux phases compacte · deux phases · professionnelle.
+    Le budget sert uniquement à situer la classe ; aucun prix de modèle n'est affiché.</p>
+  </footer>
+
+</main>
+
+<section class="sheet" id="sheet" hidden aria-label="Fiche détaillée du modèle">
+  <div class="sheet-inner">
+    <div class="sheet-bar">
+      <button type="button" id="sheetBack">← Retour</button>
+      <span class="hint" style="margin:0">Fiche détaillée</span>
+    </div>
+    <div id="sheetBody"></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===== Gamme vérifiée — 76 souffleuses (27 d'origine, Part Number Search 2026-10-20 ;
+     + 35 ajouts d'exhaustivité gammes officielles 2026, 2026-10-22 ;
+     + 14 Ducar, gamme canadienne 2026-2027 MTI Canada, ajoutées le 2026-11-19) =====
+     cls : 0 = une phase, 1 = deux phases compacte, 2 = deux phases, 3 = professionnelle.
+     track : modèle à chenilles. */
+  var MODELS = [
+    {id:"ariens-compact-24", brand:"Ariens", name:"Compact 24", desc:"Souffleuse à neige Compact 24 po (920034)", energy:"Essence", num:"920034", cls:1, track:false, img:"assets/model-ariens-compact-24.jpg"},
+    {id:"ariens-compact-24-rapidtrak", brand:"Ariens", name:"Compact 24 RapidTrak", desc:"Souffleuse à neige à chenilles Compact 24 RapidTrak (920035)", energy:"Essence", num:"920035", cls:1, track:true, img:"assets/model-ariens-compact-24-rapidtrak.jpg"},
+    {id:"ariens-deluxe-28-sho", brand:"Ariens", name:"Deluxe 28 SHO", desc:"Souffleuse à neige Deluxe 28 SHO (921072)", energy:"Essence", num:"921072", cls:2, track:false, img:"assets/model-ariens-deluxe-28-sho.jpg"},
+    {id:"ariens-deluxe-30", brand:"Ariens", name:"Deluxe 30", desc:"Souffleuse à neige Deluxe 30 po (921071)", energy:"Essence", num:"921071", cls:2, track:false, img:"assets/model-ariens-deluxe-30.jpg"},
+    {id:"ariens-platinum-28-rapidtrak", brand:"Ariens", name:"Platinum 28 RapidTrak SHO", desc:"Souffleuse à neige à chenilles Platinum 28 RapidTrak SHO (921073)", energy:"Essence", num:"921073", cls:3, track:true, img:"assets/model-ariens-platinum-28-rapidtrak.jpg"},
+    {id:"ariens-platinum-30-sho", brand:"Ariens", name:"Platinum 30 SHO", desc:"Souffleuse à neige Platinum 30 SHO (921075)", energy:"Essence", num:"921075", cls:3, track:false, img:"assets/model-ariens-platinum-30-sho.jpg"},
+    {id:"ariens-professional-32", brand:"Ariens", name:"Professional 32", desc:"Souffleuse à neige Professional 32 po (926092)", energy:"Essence", num:"926092", cls:3, track:false, img:"assets/model-ariens-professional-32.jpg"},
+    {id:"ariens-kraken-32", brand:"Ariens", name:"Professional Kraken 32", desc:"Souffleuse à neige à chenilles Professional Kraken 32 Hydro EFI RapidTrak (926520)", energy:"Essence", num:"926520", cls:3, track:true, img:"assets/model-ariens-kraken-32.jpg"},
+    {id:"toro-power-max-824-oe", brand:"Toro", name:"Power Max 824 OE", desc:"Souffleuse à neige Power Max 24 po (37798)", energy:"Essence", num:"37798", cls:1, track:false, img:"assets/model-toro-power-max-824-oe.jpg"},
+    {id:"toro-power-max-826-oae", brand:"Toro", name:"Power Max 826 OAE", desc:"Souffleuse à neige Power Max 26 po (37799)", energy:"Essence", num:"37799", cls:2, track:false, img:"assets/model-toro-power-max-826-oae.jpg"},
+    {id:"toro-power-max-hd-1030", brand:"Toro", name:"Power Max HD 1030 OHAE", desc:"Souffleuse à neige Power Max HD 30 po (38830)", energy:"Essence", num:"38830", cls:3, track:false, img:"assets/model-toro-power-max-hd-1030-ohae.jpg"},
+    {id:"toro-power-max-hd-1232", brand:"Toro", name:"Power Max HD 1232 OHXE", desc:"Souffleuse à neige Power Max HD 32 po (38842)", energy:"Essence", num:"38842", cls:3, track:false, img:"assets/model-toro-power-max-hd-1232-ohxe.jpg"},
+    {id:"toro-power-trx-1428", brand:"Toro", name:"Power TRX HD 1428 OHXE", desc:"Souffleuse à neige à chenilles Power TRX HD 28 po (38890)", energy:"Essence", num:"38890", cls:3, track:true, img:"assets/model-toro-power-trx-hd-1428-ohxe.jpg"},
+    {id:"toro-power-trx-1432", brand:"Toro", name:"Power TRX HD 1432 OHXE", desc:"Souffleuse à neige à chenilles Power TRX HD 32 po (38891)", energy:"Essence", num:"38891", cls:3, track:true, img:"assets/model-toro-power-trx-hd-1432-ohxe.jpg"},
+    {id:"toro-snowmaster-824-qxe", brand:"Toro", name:"SnowMaster 824 QXE", desc:"Souffleuse à neige SnowMaster 24 po (36003)", energy:"Essence", num:"36003", cls:1, track:false, img:"assets/model-toro-snowmaster-824-qxe.jpg"},
+    {id:"toro-power-clear-721", brand:"Toro", name:"Power Clear 721 R-C", desc:"Souffleuse à neige Power Clear 21 po commerciale (38754)", energy:"Essence", num:"38754", cls:0, track:false, img:"assets/model-toro-power-clear-721-r-c.jpg"},
+    {id:"toro-power-clear-e21", brand:"Toro", name:"Power Clear e21", desc:"Souffleuse à neige Power Clear e21 60V Flex-Force 21 po (39901)", energy:"Batterie 60V Flex-Force", num:"39901", cls:0, track:false, img:"assets/model-toro-power-clear-e21.jpg"},
+    {id:"toro-snowmaster-60v", brand:"Toro", name:"SnowMaster 60V", desc:"Souffleuse à neige SnowMaster 60V Flex-Force 24 po (39914)", energy:"Batterie 60V Flex-Force", num:"39914", cls:1, track:false, img:"assets/model-toro-snowmaster-60v.jpg"},
+    {id:"toro-power-max-e24", brand:"Toro", name:"Power Max e24", desc:"Souffleuse à neige Power Max e24 60V Flex-Force 24 po (39924)", energy:"Batterie 60V Flex-Force", num:"39924", cls:1, track:false, img:"assets/model-toro-power-max-e24.jpg"},
+    {id:"toro-power-max-e26", brand:"Toro", name:"Power Max e26", desc:"Souffleuse à neige Power Max e26 60V Flex-Force 26 po (39926)", energy:"Batterie 60V Flex-Force", num:"39926", cls:2, track:false, img:"assets/model-toro-power-max-e26.jpg"},
+    {id:"cub-1x-21-lhp", brand:"Cub Cadet", name:"1X 21 LHP", desc:"Souffleuse à neige 1X 21 po LHP", energy:"Essence", num:null, cls:0, track:false, img:"assets/model-cubcadet-1x-21-lhp.jpg"},
+    {id:"cub-2x-24", brand:"Cub Cadet", name:"2X 24", desc:"Souffleuse à neige 2X 24 po", energy:"Essence", num:null, cls:1, track:false, img:"assets/model-cubcadet-2x-24.jpg"},
+    {id:"cub-2x-28-hd", brand:"Cub Cadet", name:"2X 28 HD", desc:"Souffleuse à neige 2X 28 po HD IntelliPower (31AH5LVNB10)", energy:"Essence", num:"31AH5LVNB10", cls:2, track:false, img:"assets/model-cubcadet-2x-28-hd.jpg"},
+    {id:"cub-2x-30-max", brand:"Cub Cadet", name:"2X 30 MAX", desc:"Souffleuse à neige 2X 30 po MAX", energy:"Essence", num:null, cls:2, track:false, img:"assets/model-cubcadet-2x-30-max.jpg"},
+    {id:"cub-2x-30-efi", brand:"Cub Cadet", name:"2X 30 EFI", desc:"Souffleuse à neige 2X 30 po EFI IntelliPower", energy:"Essence", num:null, cls:2, track:false, img:"assets/model-cubcadet-2x-30-efi.jpg"},
+    {id:"cub-3x-26", brand:"Cub Cadet", name:"3X 26", desc:"Souffleuse à neige 3X 26 po", energy:"Essence", num:null, cls:2, track:false, img:"assets/model-cubcadet-3x-26.jpg"},
+    {id:"cub-3x-28", brand:"Cub Cadet", name:"3X 28", desc:"Souffleuse à neige 3X 28 po IntelliPower (31AH5JVBB10)", energy:"Essence", num:"31AH5JVBB10", cls:3, track:false, img:"assets/model-cubcadet-3x-28.jpg"},
+    /* ===== Ajouts d'exhaustivité 2026 (gammes officielles canadiennes complètes, vérifiés le 2026-10-22) ===== */
+    {id:"ariens-s18", brand:"Ariens", name:"S18", desc:"Souffleuse à neige S18 18 po (938026)", energy:"Essence", num:"938026", cls:0, track:false, img:"assets/model-ariens-s18.jpg"},
+    {id:"ariens-s18e", brand:"Ariens", name:"S18E", desc:"Souffleuse à neige S18E 18 po à démarrage électrique (938027)", energy:"Essence", num:"938027", cls:0, track:false, img:"assets/model-ariens-s18e.jpg"},
+    {id:"ariens-path-pro-208e", brand:"Ariens", name:"Path-Pro 208E", desc:"Souffleuse à neige Path-Pro 208E 21 po (938032)", energy:"Essence", num:"938032", cls:0, track:false, img:"assets/model-ariens-path-pro-208e.jpg"},
+    {id:"ariens-path-pro-208ec", brand:"Ariens", name:"Path-Pro 208EC", desc:"Souffleuse à neige Path-Pro 208EC 21 po, chute à distance (938033)", energy:"Essence", num:"938033", cls:0, track:false, img:"assets/model-ariens-path-pro-208ec.jpg"},
+    {id:"ariens-professional-21-ssr", brand:"Ariens", name:"Professional 21 SSR", desc:"Souffleuse à neige commerciale Professional 21 SSR 21 po (938024)", energy:"Essence", num:"938024", cls:0, track:false, img:"assets/model-ariens-professional-21-ssr.jpg"},
+    {id:"ariens-professional-21-ssrc", brand:"Ariens", name:"Professional 21 SSRC", desc:"Souffleuse à neige commerciale Professional 21 SSRC 21 po, chute à distance (938025)", energy:"Essence", num:"938025", cls:0, track:false, img:"assets/model-ariens-professional-21-ssrc.jpg"},
+    {id:"ariens-classic-24", brand:"Ariens", name:"Classic 24", desc:"Souffleuse à neige Classic 24 po (920036)", energy:"Essence", num:"920036", cls:1, track:false, img:"assets/model-ariens-classic-24.jpg"},
+    {id:"ariens-deluxe-24", brand:"Ariens", name:"Deluxe 24", desc:"Souffleuse à neige Deluxe 24 po (921069)", energy:"Essence", num:"921069", cls:2, track:false, img:"assets/model-ariens-deluxe-24.jpg"},
+    {id:"ariens-deluxe-28", brand:"Ariens", name:"Deluxe 28", desc:"Souffleuse à neige Deluxe 28 po (921070)", energy:"Essence", num:"921070", cls:2, track:false, img:"assets/model-ariens-deluxe-28.jpg"},
+    {id:"ariens-deluxe-28-whiteout", brand:"Ariens", name:"Deluxe 28 Whiteout", desc:"Souffleuse à neige Deluxe 28 Whiteout, édition limitée blanche (921079)", energy:"Essence", num:"921079", cls:2, track:false, img:"assets/model-ariens-deluxe-28-whiteout.jpg"},
+    {id:"ariens-deluxe-30-efi", brand:"Ariens", name:"Deluxe 30 EFI", desc:"Souffleuse à neige Deluxe 30 EFI 30 po (921049)", energy:"Essence", num:"921049", cls:2, track:false, img:"assets/model-ariens-deluxe-30-efi.jpg"},
+    {id:"ariens-platinum-24-sho", brand:"Ariens", name:"Platinum 24 SHO", desc:"Souffleuse à neige Platinum 24 SHO (921063)", energy:"Essence", num:"921063", cls:3, track:false, img:"assets/model-ariens-platinum-24-sho.jpg"},
+    {id:"ariens-professional-28", brand:"Ariens", name:"Professional 28", desc:"Souffleuse à neige Professional 28 po (926083)", energy:"Essence", num:"926083", cls:3, track:false, img:"assets/model-ariens-professional-28.jpg"},
+    {id:"ariens-professional-28-alpine", brand:"Ariens", name:"Professional 28 Alpine Edition", desc:"Souffleuse à neige à chenilles Professional 28 Hydro EFI RapidTrak Alpine Edition (926091)", energy:"Essence", num:"926091", cls:3, track:true, img:"assets/model-ariens-professional-28-alpine.jpg"},
+    {id:"ariens-professional-32-mountaineering", brand:"Ariens", name:"Professional 32 Mountaineering Edition", desc:"Souffleuse à neige à chenilles Professional 32 Hydro EFI RapidTrak Mountaineering Edition (926521)", energy:"Essence", num:"926521", cls:3, track:true, img:"assets/model-ariens-professional-32-mountaineering.jpg"},
+    {id:"ariens-professional-36", brand:"Ariens", name:"Professional 36 Hydro EFI", desc:"Souffleuse à neige Professional 36 Hydro EFI 36 po (926081)", energy:"Essence", num:"926081", cls:3, track:false, img:"assets/model-ariens-professional-36.jpg"},
+    {id:"toro-power-clear-518-ze", brand:"Toro", name:"Power Clear 518 ZE", desc:"Souffleuse à neige Power Clear 518 ZE 18 po (38475)", energy:"Essence", num:"38475", cls:0, track:false, img:"assets/model-toro-power-clear-518-ze.jpg"},
+    {id:"toro-power-clear-721-r", brand:"Toro", name:"Power Clear 721 R", desc:"Souffleuse à neige Power Clear 721 R 21 po (38752)", energy:"Essence", num:"38752", cls:0, track:false, img:"assets/model-toro-power-clear-721-r.jpg"},
+    {id:"toro-power-clear-721-e", brand:"Toro", name:"Power Clear 721 E", desc:"Souffleuse à neige Power Clear 721 E 21 po (38753)", energy:"Essence", num:"38753", cls:0, track:false, img:"assets/model-toro-power-clear-721-e.jpg"},
+    {id:"toro-power-clear-721-qze", brand:"Toro", name:"Power Clear 721 QZE", desc:"Souffleuse à neige Power Clear 721 QZE 21 po (38756)", energy:"Essence", num:"38756", cls:0, track:false, img:"assets/model-toro-power-clear-721-qze.jpg"},
+    {id:"toro-power-clear-821-rc", brand:"Toro", name:"Power Clear 821 R-C", desc:"Souffleuse à neige Power Clear 821 R-C 21 po commerciale (38755)", energy:"Essence", num:"38755", cls:0, track:false, img:"assets/model-toro-power-clear-821-rc.jpg"},
+    {id:"toro-power-clear-821-qze", brand:"Toro", name:"Power Clear 821 QZE", desc:"Souffleuse à neige Power Clear 821 QZE 21 po (38757)", energy:"Essence", num:"38757", cls:0, track:false, img:"assets/model-toro-power-clear-821-qze.jpg"},
+    {id:"toro-power-clear-e21-commercial", brand:"Toro", name:"Power Clear e21 Commercial SP", desc:"Souffleuse à neige Power Clear e21 60V Flex-Force commerciale autopropulsée 21 po (39921)", energy:"Batterie 60V Flex-Force", num:"39921", cls:0, track:false, img:"assets/model-toro-power-clear-e21-commercial.jpg"},
+    {id:"toro-snowmaster-724-qxe", brand:"Toro", name:"SnowMaster 724 QXE", desc:"Souffleuse à neige SnowMaster 724 QXE 24 po (36002)", energy:"Essence", num:"36002", cls:1, track:false, img:"assets/model-toro-snowmaster-724-qxe.jpg"},
+    {id:"toro-snowmaster-60v-39915", brand:"Toro", name:"SnowMaster 60V — phares LED", desc:"Souffleuse à neige SnowMaster 60V Flex-Force 24 po avec phares LED et 2 batteries (39915)", energy:"Batterie 60V Flex-Force", num:"39915", cls:1, track:false, img:"assets/model-toro-snowmaster-60v-39915.jpg"},
+    {id:"toro-power-max-724-oe", brand:"Toro", name:"Power Max 724 OE", desc:"Souffleuse à neige Power Max 724 OE 24 po (37807)", energy:"Essence", num:"37807", cls:1, track:false, img:"assets/model-toro-power-max-724-oe.jpg"},
+    {id:"toro-power-max-hd-828-oae", brand:"Toro", name:"Power Max HD 828 OAE", desc:"Souffleuse à neige Power Max HD 828 OAE 28 po (38838)", energy:"Essence", num:"38838", cls:2, track:false, img:"assets/model-toro-power-max-hd-828-oae.jpg"},
+    {id:"cub-2x-26", brand:"Cub Cadet", name:"2X 26", desc:"Souffleuse à neige 2X 26 po IntelliPower", energy:"Essence", num:null, cls:1, track:false, img:"assets/model-cubcadet-2x-26.jpg"},
+    {id:"cub-2x-26-trac", brand:"Cub Cadet", name:"2X 26 TRAC", desc:"Souffleuse à neige à chenilles 2X 26 po TRAC IntelliPower (31AH7IVSB10)", energy:"Essence", num:"31AH7IVSB10", cls:1, track:true, img:"assets/model-cubcadet-2x-26-trac.jpg"},
+    {id:"cub-2x-30", brand:"Cub Cadet", name:"2X 30", desc:"Souffleuse à neige 2X 30 po", energy:"Essence", num:null, cls:2, track:false, img:"assets/model-cubcadet-2x-30.jpg"},
+    {id:"cub-3x-26-trac", brand:"Cub Cadet", name:"3X 26 TRAC", desc:"Souffleuse à neige à chenilles 3X 26 po TRAC", energy:"Essence", num:null, cls:2, track:true, img:"assets/model-cubcadet-3x-26-trac.jpg"},
+    {id:"cub-3x-30-hd", brand:"Cub Cadet", name:"3X 30 HD", desc:"Souffleuse à neige 3X 30 po HD (31AH5EVW710)", energy:"Essence", num:"31AH5EVW710", cls:3, track:false, img:"assets/model-cubcadet-3x-30-hd.jpg"},
+    {id:"cub-3x-30-trac", brand:"Cub Cadet", name:"3X 30 TRAC", desc:"Souffleuse à neige à chenilles 3X 30 po TRAC (31AH7EVZ710)", energy:"Essence", num:"31AH7EVZ710", cls:3, track:true, img:"assets/model-cubcadet-3x-30-trac.jpg"},
+    {id:"cub-3x-30-max", brand:"Cub Cadet", name:"3X 30 MAX", desc:"Souffleuse à neige 3X 30 po MAX", energy:"Essence", num:null, cls:3, track:false, img:"assets/model-cubcadet-3x-30-max.jpg"},
+    {id:"cub-3x-34-max-h", brand:"Cub Cadet", name:"3X 34 MAX H", desc:"Souffleuse à neige 3X 34 po MAX H IntelliPower EFI hydrostatique", energy:"Essence", num:null, cls:3, track:false, img:"assets/model-cubcadet-3x-34-max-h.jpg"},
+    /* ===== Ducar (MTI Canada) — gamme canadienne 2026-2027, recensement vérifié modèle par
+       modèle le 2026-11-16 (mêmes données que le Comparatif souffleuses 2026-2027) ===== */
+    {id:"ducar-sb721ss", brand:"Ducar", name:"SB721SS", desc:"Souffleuse à neige SB721SS 21 po (DUESB721SS)", energy:"Essence", num:"DUESB721SS", cls:0, track:false, img:"assets/model-ducar-duesb721ss.jpg"},
+    {id:"ducar-sb721", brand:"Ducar", name:"SB721", desc:"Souffleuse à neige SB721 21 po (DUESB721)", energy:"Essence", num:"DUESB721", cls:1, track:false, img:"assets/model-ducar-duesb721.jpg"},
+    {id:"ducar-sb724", brand:"Ducar", name:"SB724", desc:"Souffleuse à neige SB724 24 po (DUESB724)", energy:"Essence", num:"DUESB724", cls:1, track:false, img:"assets/model-ducar-duesb724.jpg"},
+    {id:"ducar-sb726", brand:"Ducar", name:"SB726", desc:"Souffleuse à neige SB726 26 po (DUESB726)", energy:"Essence", num:"DUESB726", cls:1, track:false, img:"assets/model-ducar-duesb726.jpg"},
+    {id:"ducar-sb926t", brand:"Ducar", name:"SB926T", desc:"Souffleuse à neige à chenilles SB926T 26 po (DUESB926T)", energy:"Essence", num:"DUESB926T", cls:1, track:true, img:"assets/model-ducar-duesb926t.jpg"},
+    {id:"ducar-sb928", brand:"Ducar", name:"SB928", desc:"Souffleuse à neige SB928 28 po (DUESB928)", energy:"Essence", num:"DUESB928", cls:2, track:false, img:"assets/model-ducar-duesb928.jpg"},
+    {id:"ducar-sb928-se", brand:"Ducar", name:"SB928-SE — édition spéciale", desc:"Souffleuse à neige SB928-SE 28 po, édition spéciale rouge/blanc/bleu (DUESB928-SE)", energy:"Essence", num:"DUESB928-SE", cls:2, track:false, img:"assets/model-ducar-duesb928-se.jpg"},
+    {id:"ducar-sb1130", brand:"Ducar", name:"SB1130", desc:"Souffleuse à neige SB1130 30 po (DUESB1130)", energy:"Essence", num:"DUESB1130", cls:2, track:false, img:"assets/model-ducar-duesb1130.jpg"},
+    {id:"ducar-sb1130t", brand:"Ducar", name:"SB1130T", desc:"Souffleuse à neige à chenilles SB1130T 30 po (DUESB1130T)", energy:"Essence", num:"DUESB1130T", cls:3, track:true, img:"assets/model-ducar-duesb1130t.jpg"},
+    {id:"ducar-sb1334", brand:"Ducar", name:"SB1334", desc:"Souffleuse à neige SB1334 34 po (DUESB1334)", energy:"Essence", num:"DUESB1334", cls:3, track:false, img:"assets/model-ducar-duesb1334.jpg"},
+    {id:"ducar-sb1534t", brand:"Ducar", name:"SB1534T", desc:"Souffleuse à neige à chenilles SB1534T 34 po (DUESB1534T)", energy:"Essence", num:"DUESB1534T", cls:3, track:true, img:"assets/model-ducar-duesb1534t.jpg"},
+    {id:"ducar-sbso1542t", brand:"Ducar", name:"SBSO1542T — opérateur debout", desc:"Souffleuse à neige à opérateur debout SBSO1542T 42 po (DUESBSO1542T)", energy:"Essence", num:"DUESBSO1542T", cls:3, track:false, img:"assets/model-ducar-duesbso1542t.jpg"},
+    {id:"ducar-pb32sb22w", brand:"Ducar", name:"PB32SB22W — 2-en-1", desc:"Souffleuse à neige 2-en-1 PB32SB22W 22 po avec brosse rotative 32 po (DUEPB32SB22W)", energy:"Essence", num:"DUEPB32SB22W", cls:1, track:false, img:"assets/model-ducar-duepb32sb22w.jpg"},
+    {id:"ducar-dcs-sb40", brand:"Ducar", name:"Souffleuse pour tracteur DCS", desc:"Accessoire souffleuse 40 po pour tracteur 2 roues DCS (DUEDCS-SB40)", energy:"Essence", num:"DUEDCS-SB40", cls:3, track:false, img:"assets/model-ducar-duedcs-sb40.jpg"}
+  ];
+
+  /* ===== Specs officielles 2026 (vérifiées le 2026-10-22) =====
+     eng : désignation du moteur publiée par la marque de souffleuse.
+     hp / torque : UNIQUEMENT quand publiés (par le fabricant du moteur, ou par la
+       marque — hpSrc le précise). null = non publié, affiché comme tel. Aucune
+       estimation, aucune conversion cc → HP.
+     throwFt : portée maximale publiée par le fabricant de la souffleuse (pi).
+     Champs null = non publiés par le fabricant ; les caractéristiques booléennes
+       (grips) n'apparaissent que si le fabricant les liste. */
+  var NP = "Non publié par le fabricant";
+  var SPECS = {
+    "ariens-compact-24": {eng:"Ariens AX — 223 cc (moteur construit par LCT)", cc:223, throwFt:"40",
+      auger:"11 po", impeller:"12 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"187 lb",
+      lights:"Phare LED", chute:"Quick Turn 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-compact-24-rapidtrak": {eng:"Ariens AX — 223 cc (moteur construit par LCT)", cc:223, throwFt:"40",
+      lights:"Phare LED", chute:"Quick Turn 2,5X", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel"},
+    "ariens-deluxe-28-sho": {eng:"Ariens AX — 301 cc (moteur construit par LCT)", cc:301, throwFt:"55",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"246,7 lb",
+      lights:"Phare LED", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-deluxe-30": {eng:"Ariens AX — 301 cc (moteur construit par LCT)", cc:301, throwFt:"50",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"258,1 lb",
+      grips:true, lights:"Phare LED", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-platinum-28-rapidtrak": {eng:"Ariens AX — 389 cc (moteur construit par LCT)", cc:389, throwFt:"55",
+      grips:true, lights:"Phare LED", chute:"Quick Turn", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel"},
+    "ariens-platinum-30-sho": {eng:"Ariens AX — 420 cc (moteur construit par LCT)", cc:420, throwFt:"55",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"274 lb",
+      grips:true, lights:"Phare LED", chute:"Quick Turn ; déflecteur à distance", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel"},
+    "ariens-professional-32": {eng:"Ariens AX — 420 cc (moteur construit par LCT)", cc:420, throwFt:"60",
+      lights:"Phare LED", chute:"Quick Turn ; déflecteur à distance", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 1 an commercial"},
+    "ariens-kraken-32": {eng:"Ariens AX — 420 cc EFI (moteur construit par LCT)", cc:420, torque:21, hp:13.1, hpSrc:"Ariens (site européen)", throwFt:"60",
+      impeller:"14 po", intake:"23,5 po", speeds:"Hydrostatique (vitesse variable)", weight:"389 lb",
+      grips:true, lights:"Phare LED, barre LED de 21 po, éclairage de chute et arrière",
+      chute:"Manette électrique au guidon (joystick)", steering:"Auto-Turn",
+      start:"Électrique 12 V à clé et à rappel", warranty:"3 ans résidentiel / 1 an commercial"},
+    "toro-power-max-824-oe": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"45",
+      auger:"11 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"184 lb",
+      chute:"Quick Stick (200°)", start:"Électrique", warranty:"3 ans limitée"},
+    "toro-power-max-826-oae": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"45",
+      auger:"11 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"189 lb",
+      lights:"Phares LED", chute:"Quick Stick (200°)", steering:"Direction sans déclencheur (Triggerless Steering)",
+      start:"Électrique", warranty:"3 ans limitée"},
+    "toro-power-max-hd-1030": {eng:"Toro Premium — 302 cc OHV (moteur construit par Loncin)", cc:302, throwFt:"45",
+      auger:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"290 lb",
+      grips:true, lights:"Phares LED", chute:"Quick Stick (200°)", steering:"Direction sans déclencheur (Triggerless Steering)",
+      start:"Électrique", warranty:"3 ans limitée"},
+    "toro-power-max-hd-1232": {eng:"Toro Premium — 375 cc OHV (moteur construit par Loncin)", cc:375, throwFt:"57",
+      auger:"14 po", intake:"21,5 po", speeds:"6 avant / 2 arrière", weight:"301 lb",
+      grips:true, lights:"Phares LED", chute:"Quick Stick (200°)", steering:"Direction assistée",
+      start:"Électrique", warranty:"3 ans limitée"},
+    "toro-power-trx-1428": {eng:"Toro Premium — 420 cc OHV (moteur construit par Loncin)", cc:420, throwFt:"60+",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"304 lb",
+      grips:true, lights:"Phares LED", chute:"Quick Stick (200°)", steering:"Direction assistée",
+      start:"Électrique (bouton)", warranty:"5 ans résidentiel / 1 an commercial"},
+    "toro-power-trx-1432": {eng:"Toro Premium — 420 cc OHV (moteur construit par Loncin)", cc:420, throwFt:"60+",
+      intake:"21 po",
+      grips:true, lights:"Phare LED", chute:"Quick Stick", steering:"Direction assistée",
+      start:"Électrique à bouton-poussoir", warranty:"5 ans résidentiel / 1 an commercial"},
+    "toro-snowmaster-824-qxe": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"40",
+      auger:"10 po", intake:"18 po", speeds:"Vitesse variable (Personal Pace), aucune marche arrière", weight:"131 lb",
+      chute:"Quick Stick", steering:"Direction automatique", start:"Électrique",
+      warranty:"3 ans limitée ; chute garantie à vie (propriétaire original)"},
+    "toro-power-clear-721": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"35"},
+    "toro-power-clear-e21": {eng:"Électrique — moteur sans balais, batterie 60V Flex-Force", throwFt:"40",
+      auger:"7 po", intake:"12 po", speeds:"2 avant / 0 arrière", weight:"55 lb",
+      chute:"Poignée sur la chute (Quick-Turn)", start:"Électrique (bouton)",
+      warranty:"2 ans (souffleuse) + 3 ans (batterie)"},
+    "toro-snowmaster-60v": {eng:"Électrique — moteur sans balais, batterie 60V Flex-Force", throwFt:"34",
+      auger:"10 po", intake:"18 po", speeds:"Vitesse variable (Personal Pace)",
+      chute:"Quick Stick", steering:"Direction automatique (Personal Pace)", start:"Électrique (bouton)",
+      warranty:"2 ans (outil) + 3 ans (batterie)"},
+    "toro-power-max-e24": {eng:"Électrique — moteur sans balais, batteries 60V Flex-Force", throwFt:"45",
+      auger:"11 po", impeller:"11 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"172 lb",
+      lights:"Phares LED panoramiques", chute:"Quick Stick, déflecteur simple", start:"Électrique (bouton)",
+      warranty:"3 ans (outil) + 3 ans (batterie)"},
+    "toro-power-max-e26": {eng:"Électrique — moteur sans balais, batteries 60V Flex-Force", throwFt:"45",
+      auger:"11 po", impeller:"11 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"186 lb",
+      grips:true, lights:"Phares LED", chute:"Quick Stick, déflecteur simple", steering:"Direction automatique",
+      start:"Électrique (bouton)", warranty:"3 ans (outil) + 3 ans (batterie)"},
+    "cub-1x-21-lhp": {eng:"Cub Cadet 670-JUB — 208 cc (moteur Powermore/MTD)", cc:208, throwFt:"25",
+      auger:"9 po", intake:"13 po",
+      lights:"Phare LED au tableau de bord", chute:"Levier unique à distance (rotation 190°)",
+      start:"À rappel et électrique à bouton-poussoir",
+      warranty:"3 ans résidentiel ; chute 3 ans ; 1 an commercial"},
+    "cub-2x-24": {eng:"Cub Cadet — 243 cc IntelliPower (moteur Powermore/MTD)", cc:243, throwFt:"40",
+      auger:"12 po", impeller:"12 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phares LED doubles", chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel / 1 an commercial"},
+    "cub-2x-28-hd": {eng:"Cub Cadet 890-WU — 420 cc (moteur Powermore/MTD)", cc:420, throwFt:"40",
+      auger:"12 po", impeller:"12 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles",
+      chute:"Inclinaison par levier unique à distance ; rotation 200°", steering:"Direction assistée à déclencheurs",
+      start:"À rappel et électrique à bouton-poussoir",
+      warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; chute 3 ans ; 1 an commercial"},
+    "cub-2x-30-max": {eng:"Cub Cadet 683-WUB — 357 cc (moteur Powermore/MTD)", cc:357, throwFt:"40",
+      auger:"14 po", impeller:"14 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"À rappel et électrique à bouton-poussoir", warranty:"3 ans résidentiel / 1 an commercial"},
+    "cub-2x-30-efi": {eng:"Cub Cadet 983-WUA — 357 cc EFI (moteur Powermore/MTD)", cc:357, throwFt:"40",
+      auger:"12 po", impeller:"12 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"À rappel et électrique à bouton-poussoir",
+      warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; chute 3 ans ; 1 an commercial"},
+    "cub-3x-26": {eng:"Cub Cadet 683-WUB — 357 cc (moteur Powermore/MTD)", cc:357,
+      auger:"12 po", impeller:"12 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir (110 V) et à rappel",
+      warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    "cub-3x-28": {eng:"Cub Cadet — 357 cc IntelliPower (moteur Powermore/MTD)", cc:357, throwFt:"40",
+      auger:"12 po", impeller:"12 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"À rappel et électrique à bouton-poussoir", warranty:"3 ans résidentiel"},
+    /* ===== Specs des ajouts 2026 — mêmes sources officielles, « non publié » quand le fabricant ne publie pas ===== */
+    "ariens-s18": {eng:"Ariens AX — 99 cc (moteur construit par LCT)", cc:99, throwFt:"25",
+      auger:"7 po", intake:"12 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"Manuelle (210°)", start:"À rappel"},
+    "ariens-s18e": {eng:"Ariens AX — 99 cc (moteur construit par LCT)", cc:99, throwFt:"25",
+      auger:"7 po", intake:"12 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"Manuelle (210°)", start:"Électrique 120 V et à rappel"},
+    "ariens-path-pro-208e": {eng:"Ariens AX — 208 cc (moteur construit par LCT)", cc:208, throwFt:"35",
+      auger:"8,375 po", intake:"12,2 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"Manuelle (210°)", start:"Électrique 120 V et à rappel"},
+    "ariens-path-pro-208ec": {eng:"Ariens AX — 208 cc (moteur construit par LCT)", cc:208, throwFt:"35",
+      auger:"8,375 po", intake:"12,2 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"À distance, depuis le guidon (210°)", start:"Électrique 120 V et à rappel"},
+    "ariens-professional-21-ssr": {eng:"Ariens AX — 208 cc (moteur construit par LCT)", cc:208, throwFt:"35",
+      auger:"8,375 po", intake:"12,1 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"Manuelle (210°)", start:"À rappel"},
+    "ariens-professional-21-ssrc": {eng:"Ariens AX — 208 cc (moteur construit par LCT)", cc:208, throwFt:"35",
+      auger:"8,375 po", intake:"12,1 po", speeds:"1 avant (propulsion par la tarière)",
+      chute:"À distance, depuis le guidon (210°)", start:"À rappel"},
+    "ariens-classic-24": {eng:"Ariens AX — 208 cc (moteur construit par LCT)", cc:208, throwFt:"40",
+      auger:"11 po", impeller:"12 po", intake:"20 po", speeds:"6 avant / 2 arrière", weight:"187 lb",
+      chute:"Quick Turn 2,5X (200°) ; déflecteur à distance", steering:"Pin-Lock",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial"},
+    "ariens-deluxe-24": {eng:"Ariens AX — 254 cc (moteur construit par LCT)", cc:254, throwFt:"50",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phare LED", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-deluxe-28": {eng:"Ariens AX — 252 cc (moteur construit par LCT)", cc:252, throwFt:"50",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière", weight:"232,7 lb",
+      lights:"Phare LED", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-deluxe-28-whiteout": {eng:"Ariens AX — 252 cc (moteur construit par LCT)", cc:252, throwFt:"50",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phare LED + éclairage LED de 6 po du boîtier", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-deluxe-30-efi": {eng:"Ariens AX — 306 cc EFI (moteur construit par LCT)", cc:306, throwFt:"50",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phare LED", chute:"Ice Drill 2,5X ; déflecteur par levier au tableau de bord", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 90 jours commercial ; boîte d'engrenages 5 ans (résidentiel)"},
+    "ariens-platinum-24-sho": {eng:"Ariens AX — 369 cc (moteur construit par LCT)", cc:369, throwFt:"55",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phare LED", chute:"Quick Turn", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel"},
+    "ariens-professional-28": {eng:"Ariens AX — 420 cc (moteur construit par LCT)", cc:420, throwFt:"60",
+      auger:"16 po", impeller:"14 po", intake:"23,5 po", speeds:"6 avant / 2 arrière",
+      lights:"Phare LED", chute:"Quick Turn", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 1 an commercial"},
+    "ariens-professional-28-alpine": {eng:"Ariens AX — 420 cc EFI (moteur construit par LCT)", cc:420, throwFt:"60",
+      auger:"16 po", impeller:"14 po", intake:"23,5 po", speeds:"Hydrostatique (vitesse variable)",
+      grips:true, lights:"Phare LED + barre LED", chute:"Manette électrique au guidon (joystick)", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 1 an commercial"},
+    "ariens-professional-32-mountaineering": {eng:"Ariens AX — 420 cc EFI (moteur construit par LCT)", cc:420, throwFt:"60",
+      auger:"16 po", impeller:"14 po", intake:"23,5 po", speeds:"Hydrostatique (vitesse variable)",
+      grips:true, lights:"Phare LED + barre LED", chute:"Manette électrique au guidon (joystick)", steering:"Auto-Turn",
+      start:"Électrique 12 V à clé et à rappel", warranty:"3 ans résidentiel / 1 an commercial"},
+    "ariens-professional-36": {eng:"Ariens AX — 420 cc EFI (moteur construit par LCT)", cc:420, throwFt:"60",
+      auger:"16 po", impeller:"14 po", intake:"23,5 po", speeds:"Hydrostatique (vitesse variable)", weight:"314 lb",
+      grips:true, lights:"Phare LED", chute:"Quick Turn", steering:"Auto-Turn",
+      start:"Électrique 120 V et à rappel", warranty:"3 ans résidentiel / 1 an commercial ; boîte d'engrenages 5 ans"},
+    "toro-power-clear-518-ze": {eng:"Toro Premium — 99 cc OHV (moteur construit par Loncin)", cc:99, throwFt:"25",
+      intake:"12 po", chute:"Poignée sur la chute", start:"Électrique",
+      warranty:"2 ans limitée + 2 ans « Guaranteed to Start » (résidentiel)"},
+    "toro-power-clear-721-r": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"35",
+      auger:"8,5 po", intake:"12,5 po", chute:"Poignée sur la chute (déflecteur verrouillable)", start:"À rappel",
+      warranty:"2 ans complète + 2 ans « Guaranteed to Start » (résidentiel)"},
+    "toro-power-clear-721-e": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"35",
+      auger:"8,5 po", intake:"12,5 po", chute:"Poignée sur la chute (déflecteur verrouillable)", start:"Électrique et à rappel",
+      warranty:"2 ans complète + 2 ans « Guaranteed to Start » (résidentiel)"},
+    "toro-power-clear-721-qze": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"35",
+      auger:"8,5 po", intake:"12,5 po", chute:"Quick Chute (contrôle rapide au guidon)", start:"Électrique",
+      warranty:"2 ans limitée"},
+    "toro-power-clear-821-rc": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"40",
+      auger:"8,5 po", intake:"12,5 po", chute:"Poignée sur la chute (déflecteur Zip)", start:"À rappel",
+      warranty:"2 ans « Guaranteed to Start » (résidentiel)"},
+    "toro-power-clear-821-qze": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"40",
+      auger:"8,5 po", intake:"12,5 po", chute:"Quick Chute (contrôle rapide au guidon)", start:"Électrique",
+      warranty:"2 ans limitée"},
+    "toro-power-clear-e21-commercial": {eng:"Électrique — moteur sans balais, batterie 60V Flex-Force 10,0 Ah", throwFt:"40",
+      auger:"8,5 po", intake:"12 po", chute:"Poignée sur la chute", start:"Électrique (bouton)",
+      warranty:"2 ans (souffleuse) + 3 ans (batterie)"},
+    "toro-snowmaster-724-qxe": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"40",
+      intake:"18 po", speeds:"Vitesse variable (Personal Pace), aucune marche arrière",
+      chute:"Quick Stick", steering:"Direction automatique (Personal Pace)", start:"Électrique",
+      warranty:"3 ans limitée ; chute garantie à vie (propriétaire original)"},
+    "toro-snowmaster-60v-39915": {eng:"Électrique — moteur sans balais, batteries 60V Flex-Force (10,0 Ah + 5,0 Ah)", throwFt:"34",
+      auger:"10 po", intake:"18 po", speeds:"Vitesse variable (Personal Pace)",
+      lights:"Phares LED", chute:"Quick Stick", steering:"Direction automatique (Personal Pace)", start:"Électrique (bouton)",
+      warranty:"2 ans (outil) + 3 ans (batterie)"},
+    "toro-power-max-724-oe": {eng:"Toro Premium — 212 cc OHV (moteur construit par Loncin)", cc:212, throwFt:"40",
+      auger:"11 po", impeller:"11 po", intake:"20 po", speeds:"6 avant / 2 arrière",
+      chute:"Quick Stick (200°)", start:"Électrique", warranty:"3 ans limitée"},
+    "toro-power-max-hd-828-oae": {eng:"Toro Premium — 252 cc OHV (moteur construit par Loncin)", cc:252, throwFt:"45",
+      auger:"14 po", impeller:"14 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED", chute:"Quick Stick (200°)", steering:"Direction sans déclencheur (Triggerless Steering)",
+      start:"Électrique", warranty:"3 ans limitée"},
+    "cub-2x-26": {eng:"Cub Cadet — 243 cc IntelliPower (moteur Powermore/MTD)", cc:243,
+      auger:"12 po", impeller:"12 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phares LED doubles", chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel / 1 an commercial"},
+    "cub-2x-26-trac": {eng:"Cub Cadet — 272 cc IntelliPower (moteur Powermore/MTD)", cc:272,
+      auger:"12 po", impeller:"12 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel / 1 an commercial"},
+    "cub-2x-30": {eng:"Cub Cadet — 357 cc (moteur Powermore/MTD)", cc:357,
+      auger:"12 po", impeller:"12 po", intake:"21 po", speeds:"6 avant / 2 arrière",
+      lights:"Phares LED doubles", chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel / 1 an commercial"},
+    "cub-3x-26-trac": {eng:"Cub Cadet — 357 cc (moteur Powermore/MTD)", cc:357,
+      auger:"12 po", impeller:"12 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    "cub-3x-30-hd": {eng:"Cub Cadet — 420 cc (moteur Powermore/MTD)", cc:420,
+      intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    "cub-3x-30-trac": {eng:"Cub Cadet — 420 cc (moteur Powermore/MTD)", cc:420,
+      intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    "cub-3x-30-max": {eng:"Cub Cadet — 420 cc (moteur Powermore/MTD)", cc:420,
+      auger:"14 po", impeller:"14 po", intake:"23 po", speeds:"6 avant / 2 arrière",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    "cub-3x-34-max-h": {eng:"Cub Cadet — 420 cc EFI IntelliPower (moteur Powermore/MTD)", cc:420,
+      auger:"14 po", impeller:"14 po", intake:"23 po", speeds:"Hydrostatique (vitesse variable)",
+      grips:true, lights:"Phares LED doubles + barre LED",
+      chute:"Manivelle supérieure (200°) ; inclinaison par levier unique à distance", steering:"Direction assistée à déclencheurs",
+      start:"Électrique à bouton-poussoir", warranty:"3 ans résidentiel ; boîte d'engrenages de tarière 5 ans ; 1 an commercial"},
+    /* ===== Ducar (MTI Canada) — specs officielles ducar.ca, recensement du 2026-11-16.
+       HP publiés par Ducar (hpSrc) ; aucun couple publié par Ducar. Boîtier de 22 po
+       publié pour la gamme deux phases. Portée, tarière, impulseur, poids et vitesses :
+       non publiés par Ducar — affichés « non publié », jamais devinés. ===== */
+    "ducar-sb721ss": {eng:"Loncin — 196 cc", cc:196, hp:6.5, hpSrc:"Ducar",
+      start:"À rappel", warranty:"2 ans"},
+    "ducar-sb721": {eng:"Ducar — 212 cc", cc:212, hp:7, hpSrc:"Ducar", intake:"22 po",
+      warranty:"2 ans"},
+    "ducar-sb724": {eng:"Ducar — 212 cc", cc:212, hp:7, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", warranty:"2 ans"},
+    "ducar-sb726": {eng:"Ducar — 212 cc", cc:212, hp:7, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", chute:"Goulotte en métal", warranty:"2 ans"},
+    "ducar-sb926t": {eng:"Loncin — 252 cc", cc:252, hp:9, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", warranty:"2 ans"},
+    "ducar-sb928": {eng:"Loncin — 252 cc", cc:252, hp:9, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", warranty:"2 ans"},
+    "ducar-sb928-se": {eng:"Loncin — 252 cc", cc:252, hp:9, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", warranty:"2 ans"},
+    "ducar-sb1130": {eng:"Loncin — 302 cc", cc:302, hp:11, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", steering:"Différentiel", warranty:"2 ans"},
+    "ducar-sb1130t": {eng:"Loncin — 302 cc", cc:302, hp:11, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", steering:"Différentiel", warranty:"2 ans"},
+    "ducar-sb1334": {eng:"Loncin — 375 cc", cc:375, hp:13, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", steering:"Différentiel", warranty:"2 ans"},
+    "ducar-sb1534t": {eng:"Loncin — 420 cc", cc:420, hp:15, hpSrc:"Ducar", intake:"22 po",
+      grips:true, lights:"Phare DEL", steering:"Différentiel", warranty:"2 ans"},
+    "ducar-sbso1542t": {eng:"Loncin — 420 cc", cc:420, hp:15, hpSrc:"Ducar",
+      speeds:"Hydrostatique (vitesse variable)", lights:"Phare DEL", warranty:"2 ans"},
+    "ducar-pb32sb22w": {eng:"Ducar — 212 cc", cc:212, hp:7, hpSrc:"Ducar",
+      warranty:"2 ans"},
+    "ducar-dcs-sb40": {eng:"Accessoire entraîné par le tracteur 2 roues Ducar DCS (pas de moteur propre)",
+      warranty:"2 ans"}
+  };
+
+  function fmt1(x){ return x.toFixed(1).replace(".", ","); }
+
+  function specRows(model){
+    var s = SPECS[model.id] || {};
+    var rows = "";
+    function row(label, val){ rows += '<div><dt>' + label + '</dt><dd>' + (val ? esc(val) : NP) + '</dd></div>'; }
+    row("Moteur", s.eng);
+    var hpHtml = (s.hp != null)
+      ? fmt1(s.hp) + " HP (publié par " + esc(s.hpSrc || model.brand) + ")"
+      : NP + " — ni la marque de souffleuse ni le fabricant du moteur ne publient de HP pour ce moteur";
+    rows += '<div><dt>Puissance</dt><dd>' + hpHtml + '</dd></div>';
+    var tqHtml = (s.torque != null)
+      ? fmt1(s.torque) + " lb-pi (publié par " + esc(s.hpSrc || model.brand) + ")"
+      : NP + " — ni la marque de souffleuse ni le fabricant du moteur ne publient de couple pour ce moteur";
+    rows += '<div><dt>Couple (torque)</dt><dd>' + tqHtml + '</dd></div>';
+    var throwHtml = (s.throwFt != null)
+      ? "Jusqu'à " + s.throwFt + " pi (selon le fabricant) — maximum en conditions idéales"
+      : "Non publiée par le fabricant";
+    rows += '<div><dt>Portée de lancée</dt><dd>' + throwHtml + '</dd></div>';
+    row("Tarière (diamètre)", s.auger);
+    row("Impulseur (diamètre)", s.impeller);
+    row("Hauteur d'admission", s.intake);
+    row("Vitesses", s.speeds);
+    row("Poids", s.weight);
+    row("Démarrage", s.start);
+    row("Contrôle de chute", s.chute);
+    row("Direction", s.steering);
+    if (s.grips) rows += '<div><dt>Poignées chauffantes</dt><dd>Oui — listées par le fabricant</dd></div>';
+    if (s.lights) row("Phares", s.lights);
+    row("Garantie (Canada)", s.warranty);
+    return rows;
+  }
+
+  function specShort(m){
+    var s = SPECS[m.id] || {};
+    var parts = [];
+    if (s.cc != null) parts.push(s.cc + " cc");
+    else if (m.energy.indexOf("Batterie") === 0) parts.push("60V");
+    if (s.throwFt != null) parts.push("portée jusqu'à " + s.throwFt + " pi");
+    else parts.push("portée non publiée");
+    if (s.hp != null && s.torque != null) parts.push(fmt1(s.hp) + " HP / " + fmt1(s.torque) + " lb-pi (publiés par Ariens)");
+    else if (s.hp != null) parts.push(fmt1(s.hp) + " HP (publié par " + (s.hpSrc || m.brand) + ") — couple non publié");
+    else parts.push("HP/couple non publiés");
+    if (s.weight) parts.push(s.weight);
+    return parts.join(" · ");
+  }
+
+  var CLASSES = ["Une phase", "Deux phases compacte", "Deux phases", "Professionnelle"];
+
+  /* Ordres de priorité fixes par classe (déterministes) : le trio prend d'abord un
+     modèle par marque dans cet ordre, puis complète avec les meilleurs restants. */
+  var TRIO_ORDER = {
+    0: ["toro-power-clear-e21", "cub-1x-21-lhp", "ducar-sb721ss", "toro-power-clear-721", "ariens-path-pro-208e", "toro-power-clear-821-qze", "toro-power-clear-721-qze", "ariens-path-pro-208ec", "toro-power-clear-e21-commercial", "toro-power-clear-821-rc", "ariens-professional-21-ssrc", "toro-power-clear-721-e", "toro-power-clear-721-r", "ariens-s18e", "ariens-professional-21-ssr", "ariens-s18", "toro-power-clear-518-ze"],
+    1: ["ariens-compact-24", "toro-power-max-824-oe", "cub-2x-24", "ducar-sb724", "ariens-classic-24", "cub-2x-26", "toro-snowmaster-724-qxe", "ariens-compact-24-rapidtrak", "cub-2x-26-trac", "toro-power-max-724-oe", "toro-snowmaster-824-qxe", "toro-power-max-e24", "toro-snowmaster-60v", "toro-snowmaster-60v-39915", "ducar-sb721", "ducar-sb926t", "ducar-sb726", "ducar-pb32sb22w"],
+    2: ["toro-power-max-826-oae", "ariens-deluxe-28-sho", "cub-2x-28-hd", "ducar-sb928", "ariens-deluxe-28", "ariens-deluxe-30", "cub-2x-30", "cub-2x-30-max", "toro-power-max-hd-828-oae", "ariens-deluxe-24", "ariens-deluxe-28-whiteout", "ariens-deluxe-30-efi", "cub-3x-26", "cub-3x-26-trac", "cub-2x-30-efi", "toro-power-max-e26", "ducar-sb1130", "ducar-sb928-se"],
+    3: ["ariens-professional-32", "toro-power-max-hd-1030", "cub-3x-28", "ariens-professional-36", "ariens-kraken-32", "ariens-platinum-30-sho", "ariens-professional-28", "toro-power-max-hd-1232", "cub-3x-30-hd", "cub-3x-30-max", "cub-3x-34-max-h", "toro-power-trx-1428", "ariens-platinum-28-rapidtrak", "ariens-platinum-24-sho", "ariens-professional-28-alpine", "ariens-professional-32-mountaineering", "cub-3x-30-trac", "toro-power-trx-1432", "ducar-sb1534t", "ducar-sb1334", "ducar-sb1130t", "ducar-sbso1542t"]
+  };
+  /* En pente : les modèles à chenilles passent en tête de leur classe. */
+  var TRACK_ORDER = {
+    1: ["ariens-compact-24-rapidtrak", "cub-2x-26-trac", "ducar-sb926t", "toro-power-max-824-oe", "cub-2x-24", "ariens-compact-24", "ariens-classic-24", "cub-2x-26", "toro-snowmaster-724-qxe", "toro-power-max-724-oe", "toro-snowmaster-824-qxe", "toro-power-max-e24", "toro-snowmaster-60v", "toro-snowmaster-60v-39915", "ducar-sb724", "ducar-sb721", "ducar-sb726", "ducar-pb32sb22w"],
+    2: ["cub-3x-26-trac", "toro-power-max-826-oae", "ariens-deluxe-28-sho", "cub-2x-28-hd", "ariens-deluxe-28", "ariens-deluxe-30", "cub-2x-30", "cub-2x-30-max", "toro-power-max-hd-828-oae", "ariens-deluxe-24", "ariens-deluxe-28-whiteout", "ariens-deluxe-30-efi", "cub-3x-26", "cub-2x-30-efi", "toro-power-max-e26", "ducar-sb928", "ducar-sb1130", "ducar-sb928-se"],
+    3: ["ariens-kraken-32", "toro-power-trx-1428", "ducar-sb1534t", "ariens-professional-28-alpine", "ariens-professional-32-mountaineering", "cub-3x-30-trac", "ducar-sb1130t", "cub-3x-28", "ariens-professional-32", "toro-power-trx-1432", "ariens-platinum-28-rapidtrak", "ariens-professional-36", "toro-power-max-hd-1030", "ariens-professional-28", "cub-3x-30-hd", "cub-3x-30-max", "cub-3x-34-max-h", "ariens-platinum-30-sho", "ariens-platinum-24-sho", "toro-power-max-hd-1232", "ducar-sb1334", "ducar-sbso1542t"]
+  };
+
+  var DRIVEWAY_LABELS = ["Moins de 40 pi", "40 à 80 pi", "Plus de 80 pi"];
+  var STORM_LABELS = ["Moins de 10 po", "10 po et plus"];
+  var BUDGET_LABELS = ["Moins de 1 000 $", "1 000 à 2 000 $", "Plus de 2 000 $"];
+  var SURFACE_LABELS = ["Asphalte ou pavé, plat", "Gravier", "Pente"];
+  var BUDGET_CAP = [0, 2, 3];
+
+  function byId(id){
+    for (var i=0;i<MODELS.length;i++) if (MODELS[i].id===id) return MODELS[i];
+    return null;
+  }
+  function isBatt(m){ return m.energy.indexOf("Batterie")===0; }
+
+  function idealClass(d, s){
+    if (d===0 && s===0) return 0;
+    if (d===0 && s===1) return 1;
+    if (d===1 && s===0) return 1;
+    if (d===1 && s===1) return 2;
+    if (d===2 && s===0) return 2;
+    return 3;
+  }
+
+  function classHasTrack(cls){
+    for (var i=0;i<MODELS.length;i++) if (MODELS[i].cls===cls && MODELS[i].track) return true;
+    return false;
+  }
+
+  /* Construit le trio (jusqu'à 3 modèles) pour une classe, selon les règles :
+     - énergie : batterie seulement si batteryOK (seuils respectés) ;
+     - gravier : aucun modèle une phase ;
+     - pente : ordre à chenilles d'abord quand la classe en contient. */
+  function buildTrio(cls, opts){
+    var order = (opts.slope && TRACK_ORDER[cls]) ? TRACK_ORDER[cls] : TRIO_ORDER[cls];
+    var pool = [];
+    order.forEach(function(id){
+      var m = byId(id);
+      if (!m) return;
+      if (isBatt(m) && !opts.batteryOK) return;
+      if (opts.gravel && m.cls===0) return;
+      pool.push(m);
+    });
+    var picked = [], seen = {};
+    pool.forEach(function(m){
+      if (picked.length<3 && !seen[m.brand]){ picked.push(m); seen[m.brand]=1; }
+    });
+    pool.forEach(function(m){
+      if (picked.length<3 && picked.indexOf(m)<0) picked.push(m);
+    });
+    return pool.filter(function(m){ return picked.indexOf(m)>=0; });
+  }
+
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function pickCard(model, tag, isAlt, whyHtml){
+    var energyClass = isBatt(model) ? "energy-batt" : "energy-gas";
+    var numHtml = model.num
+      ? esc(model.num)
+      : "Non indiqué dans la gamme vérifiée — à confirmer en magasin";
+    var html = "";
+    html += '<article class="pick' + (isAlt ? " alt" : "") + '">';
+    html += '<div class="pick-grid">';
+    html += '<div class="pick-photo"><img src="' + esc(model.img) + '" alt="Photo de la souffleuse ' + esc(model.brand + " " + model.name) + '" /></div>';
+    html += '<div class="pick-body">';
+    html += '<span class="pick-tag">' + esc(tag) + '</span>';
+    html += '<h3>' + esc(model.brand) + " " + esc(model.name) + '</h3>';
+    html += '<div class="badges">';
+    html += '<span class="badge ' + energyClass + '">' + esc(model.energy) + '</span>';
+    html += '<span class="badge">Classe : ' + esc(CLASSES[model.cls]) + '</span>';
+    if (model.track) html += '<span class="badge">Chenilles</span>';
+    html += '</div>';
+    html += '<dl class="facts">';
+    html += '<div><dt>Désignation</dt><dd>' + esc(model.desc) + '</dd></div>';
+    html += '<div><dt>Nº de modèle</dt><dd>' + numHtml + '</dd></div>';
+    html += specRows(model);
+    html += '</dl>';
+    if (whyHtml) html += '<p class="why">' + whyHtml + '</p>';
+    html += '<p class="price-note">Prix : <span>prix à confirmer en magasin</span></p>';
+    html += '<button type="button" class="fiche-btn" data-fiche="' + model.id + '">Voir la fiche détaillée</button>';
+    html += '</div></div></article>';
+    return html;
+  }
+
+  var form = document.getElementById("picker");
+  var goBtn = document.getElementById("goBtn");
+  var hint = document.getElementById("formHint");
+  var result = document.getElementById("result");
+
+  function answers(){
+    function val(name){
+      var el = form.querySelector('input[name="' + name + '"]:checked');
+      return el ? parseInt(el.value, 10) : null;
+    }
+    return { d: val("driveway"), s: val("storm"), b: val("budget"), t: val("surface") };
+  }
+
+  function complete(a){ return a.d!==null && a.s!==null && a.b!==null && a.t!==null; }
+
+  function render(){
+    var a = answers();
+    if (!complete(a)){ result.className = ""; result.innerHTML = ""; return; }
+
+    var ideal = idealClass(a.d, a.s);
+    var cap = BUDGET_CAP[a.b];
+    var batteryOK = (a.d===0 && a.s===0);
+    var gravel = (a.t===1), slope = (a.t===2);
+
+    /* Règle gravier (dure) : jamais de modèle une phase — les palettes ramassent
+       et projettent les roches. La classe requise monte donc d'un cran au minimum. */
+    var effClass = ideal;
+    if (gravel && effClass===0) effClass = 1;
+
+    var opts = { batteryOK: batteryOK, gravel: gravel, slope: slope };
+    var trio = buildTrio(effClass, opts);
+    var overBudget = cap < effClass;
+
+    var html = "";
+    html += '<div class="result-head"><h2>Vos ' + trio.length + ' modèles</h2>';
+    html += '<span class="chip">Entrée : <b>' + esc(DRIVEWAY_LABELS[a.d]) + '</b></span>';
+    html += '<span class="chip">Tempêtes : <b>' + esc(STORM_LABELS[a.s]) + '</b></span>';
+    html += '<span class="chip">Budget : <b>' + esc(BUDGET_LABELS[a.b]) + '</b></span>';
+    html += '<span class="chip">Surface : <b>' + esc(SURFACE_LABELS[a.t]) + '</b></span>';
+    html += '</div>';
+
+    /* Explication principale (sur la première fiche) */
+    var why = "";
+    why += "Avec une entrée de <b>" + esc(DRIVEWAY_LABELS[a.d].toLowerCase()) + "</b> et des tempêtes de <b>"
+      + esc(STORM_LABELS[a.s].toLowerCase()) + "</b>, le besoin pointe vers la classe <b>"
+      + esc(CLASSES[ideal]) + "</b>. ";
+    if (gravel && ideal===0){
+      why += "Mais votre entrée est en <b>gravier</b> : une souffleuse une phase y ramasserait et projetterait "
+        + "les roches. La recommandation passe donc aux <b>deux phases</b> — c'est pour ça que les trois modèles "
+        + "ci-dessous sont des deux phases, même si votre entrée est petite. ";
+    } else if (gravel){
+      why += "Votre entrée est en <b>gravier</b> : seuls des modèles <b>deux phases</b> sont proposés "
+        + "(une phase y projetterait les roches). ";
+    }
+    if (slope){
+      if (classHasTrack(effClass)){
+        why += "Votre entrée est <b>en pente</b> : les modèles <b>à chenilles</b> de la classe passent en premier, "
+          + "pour la traction. ";
+      } else {
+        why += "Votre entrée est <b>en pente</b>, mais il n'existe <b>aucun modèle à chenilles</b> dans la classe "
+          + esc(CLASSES[effClass]) + " parmi les 76 modèles vérifiés — les modèles ci-dessous sont à roues ; "
+          + "on le dit franchement plutôt que de vous vendre des chenilles qui n'existent pas dans cette classe. ";
+      }
+    }
+    if (batteryOK){
+      why += "Les deux seuils batterie sont respectés (voir l'encadré ci-dessous), donc un modèle à <b>batterie</b> peut figurer dans le trio.";
+    } else {
+      why += "Au moins un seuil batterie est dépassé (voir l'encadré ci-dessous), donc les trois modèles sont à <b>essence</b>.";
+    }
+
+    trio.forEach(function(m, i){
+      var tag, w;
+      if (i===0){ tag = "Modèle recommandé"; w = why; }
+      else {
+        tag = "Autre choix — " + m.brand;
+        w = "L'option <b>" + esc(m.brand) + "</b> dans la même classe <b>" + esc(CLASSES[effClass]) + "</b>"
+          + (m.track ? ", ici un modèle <b>à chenilles</b>" : "")
+          + " — comparez les specs ci-dessus (portée, tarière, poids, garantie) avec le modèle recommandé.";
+      }
+      html += pickCard(m, tag, i>0, w);
+    });
+
+    /* Budget : trio dans la classe que le budget couvre */
+    if (overBudget){
+      var bt = buildTrio(cap, opts);
+      html += '<h3 class="sub-head">Dans votre budget — classe ' + esc(CLASSES[cap]) + '</h3>';
+      if (bt.length){
+        bt.forEach(function(m){
+          var w = "Votre budget (<b>" + esc(BUDGET_LABELS[a.b]) + "</b>) couvre jusqu'à la classe <b>"
+            + esc(CLASSES[cap]) + "</b>, pas la classe <b>" + esc(CLASSES[effClass])
+            + "</b> recommandée ci-dessus. Voici ce que ce budget achète, marque par marque — "
+            + "le compromis : ces modèles travailleront plus fort dans les conditions décrites.";
+          html += pickCard(m, "Dans votre budget — " + m.brand, true, w);
+        });
+      } else {
+        html += '<p class="unknown"><b>Aucune option dans ce budget :</b> la classe couverte par votre budget ('
+          + esc(CLASSES[cap]) + ") ne contient que des modèles une phase, et le gravier les exclut tous. "
+          + "Il n'y a donc rien d'adapté à la fois à votre surface et à votre budget dans la gamme vérifiée — "
+          + "mieux vaut le dire que recommander un modèle qui projetterait des roches.</p>";
+      }
+    }
+
+    /* Encadré seuils batterie / froid */
+    html += '<div class="caveat"><h3>Batterie ou essence — la règle des seuils</h3>';
+    if (batteryOK){
+      html += "<p>Un modèle à batterie n'est proposé que si <b>les deux</b> conditions sont réunies : "
+        + "entrée de <b>moins de 40 pi</b> <b>et</b> tempêtes typiques de <b>moins de 10 po</b>. C'est votre cas.</p>";
+      html += "<p><b>La mise en garde, en clair :</b> par grand froid, l'autonomie d'une batterie diminue. "
+        + "Sur une petite entrée et de petites bordées, ça passe sans problème ; dès que l'entrée s'allonge ou que la neige s'accumule, "
+        + "on peut manquer de charge avant d'avoir fini — c'est exactement pour ça que les seuils sont fixés à 40 pi et 10 po.</p>";
+    } else {
+      html += "<p>Un modèle à batterie n'est proposé que si <b>les deux</b> conditions sont réunies : "
+        + "entrée de <b>moins de 40 pi</b> <b>et</b> tempêtes typiques de <b>moins de 10 po</b>. "
+        + "Votre situation dépasse au moins un de ces seuils, donc les trois modèles proposés sont à <b>essence</b>.</p>";
+      html += "<p><b>Pourquoi :</b> par grand froid, l'autonomie d'une batterie diminue. Sur une longue entrée ou dans une bordée de 10 po et plus, "
+        + "on risque de manquer de charge avant d'avoir fini. L'essence n'a pas cette limite.</p>";
+    }
+    html += "</div>";
+
+    html += '<p class="unknown"><b>Pourquoi si peu de HP affichés ?</b> Parce que personne ne les publie. '
+      + "Pour chaque modèle à essence, la fiche nomme le moteur (désignation officielle de la marque : Ariens AX construit "
+      + "par <b>LCT</b>, Toro Premium construit par <b>Loncin</b>, Cub Cadet construit par <b>Powermore/MTD</b>) — et la recherche "
+      + "a été poussée jusqu'aux fabricants de moteurs : <b>ni LCT, ni Loncin, ni Powermore ne publient de HP ni de couple</b> "
+      + "pour ces moteurs précis. Les exceptions de la gamme : le Kraken, dont Ariens publie le couple (21,0 lb-pi) "
+      + "et la puissance (13,1 HP), et les modèles <b>Ducar</b>, dont MTI Canada publie la puissance sur ducar.ca "
+      + "(mais aucun couple — et Ducar prévient lui-même que ses HP ne se comparent pas directement d'une marque à l'autre). La <b>cylindrée (cc)</b>, elle, est publiée pour chaque moteur — c'est la mesure "
+      + "comparable d'une fiche à l'autre. Aucun HP n'est estimé ni converti à partir des cc : un chiffre inventé au "
+      + "comptoir reviendrait contre le magasin.</p>";
+
+    result.innerHTML = html;
+    result.className = "show";
+  }
+
+  function refreshButton(){
+    var a = answers();
+    var ok = complete(a);
+    goBtn.disabled = !ok;
+    hint.textContent = ok
+      ? "C'est complet — vos trois modèles s'affichent ci-dessous."
+      : "Répondez aux quatre questions pour obtenir vos trois modèles.";
+  }
+
+  form.addEventListener("change", function(){ refreshButton(); render(); });
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    render();
+    if (result.className === "show") result.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    form.reset();
+    result.className = ""; result.innerHTML = "";
+    refreshButton();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  /* ===== Gamme complète (repli) ===== */
+  (function buildLineup(){
+    var order = ["Ariens", "Toro", "Cub Cadet", "Ducar"];
+    var clsShort = ["Une phase", "Deux phases compacte", "Deux phases", "Pro"];
+    var html = "";
+    order.forEach(function(brand){
+      html += '<div class="brand-group' + (brand === "Ducar" ? " brand-ducar" : "") + '"><h3>' + esc(brand) + '</h3><div class="models">';
+      MODELS.forEach(function(m){
+        if (m.brand !== brand) return;
+        html += '<div class="model-row" data-fiche="' + m.id + '" role="button" tabindex="0" aria-label="Ouvrir la fiche détaillée : ' + esc(m.brand + " " + m.name) + '">';
+        html += '<img src="' + esc(m.img) + '" alt="Photo de la souffleuse ' + esc(m.brand + " " + m.name) + '" loading="lazy" />';
+        html += '<div><div class="m-name">' + esc(m.brand) + " " + esc(m.name) + (m.track ? " (chenilles)" : "") + '</div>';
+        html += '<div class="m-desc">' + esc(m.desc) + " · " + esc(m.energy) + " · " + esc(clsShort[m.cls]) + " · " + esc(specShort(m)) + '</div></div>';
+        html += '<span class="m-open">Fiche&nbsp;→</span>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    });
+    document.getElementById("lineupBody").innerHTML = html;
+  })();
+
+  /* ===== Fiche détaillée (volet 3) ===== */
+  function widthOf(m){
+    var mm = /(\d+)\s*po/.exec(m.desc);
+    return mm ? mm[1] + " po" : null;
+  }
+
+  function promoHTML(m){
+    if (m.brand === "Toro"){
+      var h = "";
+      if (isBatt(m)){
+        h += '<p class="sheet-promo"><b>Remise postale Toro de 20 $</b> à l\'achat d\'un <b>deuxième</b> produit 60V '
+          + 'Flex-Force admissible (ce modèle est admissible). Achats du <b>1<sup>er</sup> janvier au 31 octobre 2026</b>, '
+          + 'demande postée au plus tard le <b>30 novembre 2026</b> ; offre valide aux États-Unis et au Canada, '
+          + '<b>le Québec n\'est pas exclu</b> des termes officiels ; devise du 20 $ non précisée dans les termes. '
+          + 'Vérifié le 2026-10-22.</p>';
+      }
+      h += '<p class="sheet-promo"><b>Financement Flexiti « sur place »</b> chez les détaillants Toro participants '
+        + 'du Québec : plans à <b>versements mensuels égaux sans intérêt</b> (sur approbation du crédit), montant '
+        + 'minimal 500 $, frais annuels de 39,99 $ ; les plans à paiements différés ne sont pas offerts aux résidents '
+        + 'du Québec. Aucune date de fin publiée. Vérifié le 2026-10-22.</p>';
+      return h;
+    }
+    if (m.brand === "Ducar"){
+      return '<p class="sheet-promo">Aucune promotion en cours au Québec pour Ducar (aucune promotion '
+        + 'fabricant relevée sur ducar.ca lors du recensement de la gamme canadienne 2026-2027, le 2026-11-16).</p>';
+    }
+    return '<p class="sheet-promo">Aucune promotion en cours au Québec pour ' + esc(m.brand)
+      + ' (vérifié le 2026-10-22 sur les sources canadiennes officielles du fabricant).</p>';
+  }
+
+  function detailHTML(m){
+    var s = SPECS[m.id] || {};
+    function row(label, val){ return '<div><dt>' + label + '</dt><dd>' + (val ? esc(val) : NP) + '</dd></div>'; }
+    var hpHtml = (s.hp != null)
+      ? fmt1(s.hp) + " HP (publié par " + esc(s.hpSrc || m.brand) + ")"
+      : NP + " — ni la marque de souffleuse ni le fabricant du moteur ne publient de HP pour ce moteur";
+    var tqHtml = (s.torque != null)
+      ? fmt1(s.torque) + " lb-pi (publié par " + esc(s.hpSrc || m.brand) + ")"
+      : NP + " — ni la marque de souffleuse ni le fabricant du moteur ne publient de couple pour ce moteur";
+    var throwHtml = (s.throwFt != null)
+      ? "Jusqu'à " + s.throwFt + " pi (selon le fabricant) — maximum en conditions idéales"
+      : "Non publiée par le fabricant";
+    var numHtml = m.num ? esc(m.num) : "Non indiqué dans la gamme vérifiée — à confirmer en magasin";
+
+    var h = "";
+    h += '<article class="sheet-card">';
+    h += '<div class="sheet-photo"><img src="' + esc(m.img) + '" alt="Photo de la souffleuse ' + esc(m.brand + " " + m.name) + '" /></div>';
+    h += '<div class="sheet-body">';
+    h += '<h2>' + esc(m.brand) + " " + esc(m.name) + '</h2>';
+    h += '<div class="badges">';
+    h += '<span class="badge ' + (isBatt(m) ? "energy-batt" : "energy-gas") + '">' + esc(m.energy) + '</span>';
+    h += '<span class="badge">Classe : ' + esc(CLASSES[m.cls]) + '</span>';
+    if (m.track) h += '<span class="badge">Chenilles</span>';
+    h += '</div>';
+    h += '<dl class="facts wide">';
+    h += '<div><dt>Désignation</dt><dd>' + esc(m.desc) + '</dd></div>';
+    h += '<div><dt>Nº de modèle</dt><dd>' + numHtml + '</dd></div>';
+    h += '</dl>';
+
+    h += '<div class="sheet-sec"><h3>Moteur</h3><dl class="facts wide">';
+    h += row("Moteur", s.eng);
+    h += '<div><dt>Puissance</dt><dd>' + hpHtml + '</dd></div>';
+    h += '<div><dt>Couple (torque)</dt><dd>' + tqHtml + '</dd></div>';
+    h += '</dl></div>';
+
+    h += '<div class="sheet-sec"><h3>Performance</h3><dl class="facts wide">';
+    h += row("Largeur de déblaiement", widthOf(m));
+    h += '<div><dt>Portée de lancée</dt><dd>' + throwHtml + '</dd></div>';
+    h += row("Tarière (diamètre)", s.auger);
+    h += row("Impulseur (diamètre)", s.impeller);
+    h += row("Hauteur d'admission", s.intake);
+    h += row("Vitesses", s.speeds);
+    h += '</dl></div>';
+
+    h += '<div class="sheet-sec"><h3>Caractéristiques</h3><dl class="facts wide">';
+    h += row("Démarrage", s.start);
+    h += row("Contrôle de chute", s.chute);
+    h += row("Direction", s.steering);
+    h += '<div><dt>Poignées chauffantes</dt><dd>' + (s.grips ? "Oui — listées par le fabricant" : "Non listées par le fabricant") + '</dd></div>';
+    h += row("Phares", s.lights);
+    h += '<div><dt>Entraînement au sol</dt><dd>' + (m.track ? "Chenilles" : "Roues") + '</dd></div>';
+    h += row("Poids", s.weight);
+    h += '</dl></div>';
+
+    h += '<div class="sheet-sec"><h3>Garantie (Canada)</h3><dl class="facts wide">';
+    h += row("Garantie", s.warranty);
+    h += '</dl></div>';
+
+    h += '<div class="sheet-sec"><h3>Promotions — Québec</h3>' + promoHTML(m) + '</div>';
+
+    h += '<p class="price-note">Prix : <span>prix à confirmer en magasin</span></p>';
+    h += '</div></article>';
+    return h;
+  }
+
+  var sheet = document.getElementById("sheet");
+  var sheetBody = document.getElementById("sheetBody");
+  var lastFocus = null;
+  function openSheet(id){
+    var m = byId(id);
+    if (!m) return;
+    lastFocus = document.activeElement;
+    sheetBody.innerHTML = detailHTML(m);
+    sheet.hidden = false;
+    document.body.style.overflow = "hidden";
+    sheet.scrollTop = 0;
+    document.getElementById("sheetBack").focus();
+  }
+  function closeSheet(){
+    sheet.hidden = true;
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  /* Retour au portail : le lien #pageBack est un lien natif
+     target="_blank" rel="noopener" — le portail s'ouvre dans un nouvel
+     onglet, au niveau supérieur, au lieu de se charger dans le cadre
+     imbriqué actuel (les cadres ne s'empilent plus d'un aller-retour à
+     l'autre). Aucun gestionnaire de clic : le clic natif du lien est le
+     SEUL mécanisme de navigation du bouton. */
+  document.getElementById("sheetBack").addEventListener("click", closeSheet);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("[data-fiche]") : null;
+    if (t) openSheet(t.getAttribute("data-fiche"));
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && !sheet.hidden){ closeSheet(); return; }
+    var t = e.target;
+    if ((e.key === "Enter" || e.key === " ") && t && t.getAttribute && t.getAttribute("data-fiche")
+        && t.classList && t.classList.contains("model-row")){
+      e.preventDefault();
+      openSheet(t.getAttribute("data-fiche"));
+    }
+  });
+
+  /* ===== Vue « Par marque » (volet 1) ===== */
+  var currentBrand = "Ariens";
+  function renderBrand(){
+    var list = MODELS.filter(function(m){ return m.brand === currentBrand; });
+    document.getElementById("brandCount").innerHTML = "<b>" + list.length + " modèles " + esc(currentBrand)
+      + "</b> — tous les modèles de la gamme vérifiée " + (currentBrand === "Ducar" ? "2026-2027" : "2026") + ". Touchez un modèle pour ouvrir sa fiche détaillée (specs, garantie, promotions).";
+    var html = "";
+    list.forEach(function(m){
+      html += '<button type="button" class="bcard" data-fiche="' + m.id + '">';
+      html += '<span class="b-photo"><img src="' + esc(m.img) + '" alt="Photo de la souffleuse ' + esc(m.brand + " " + m.name) + '" loading="lazy" /></span>';
+      html += '<span class="b-body"><span class="b-name">' + esc(m.brand) + " " + esc(m.name) + '</span>';
+      html += '<span class="b-meta"><span class="badge">' + esc(CLASSES[m.cls]) + '</span>';
+      var w = widthOf(m);
+      if (w) html += '<span class="badge">' + esc(w) + '</span>';
+      html += '<span class="badge ' + (isBatt(m) ? "energy-batt" : "energy-gas") + '">' + esc(m.energy) + '</span>';
+      if (m.track) html += '<span class="badge">Chenilles</span>';
+      html += '</span><span class="b-open">Fiche détaillée →</span></span></button>';
+    });
+    document.getElementById("brandGrid").innerHTML = html;
+  }
+  document.querySelectorAll(".brandchips button").forEach(function(b){
+    b.addEventListener("click", function(){
+      currentBrand = b.getAttribute("data-brand");
+      document.querySelectorAll(".brandchips button").forEach(function(x){
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+      renderBrand();
+    });
+  });
+
+  /* ===== Vue « Promotions » =====
+     Mêmes données que la section « Promotions des fabricants — Québec » et que les
+     fiches détaillées (promoHTML) : nature de l'offre, dates de validité, éligibilité
+     au Québec, vérifiées le 2026-10-22. Un modèle n'apparaît ici que s'il a au moins
+     une promotion présentement en vigueur et éligible au Québec ; une marque sans
+     promotion en cours n'apparaît simplement pas. */
+  var PROMO_DATA = [
+    { brand:"Toro", id:"toro-remise-60v",
+      title:"Promotion en cours — Remise postale de 20 $",
+      short:"Remise postale de 20 $ à l'achat d'un deuxième produit 60V Flex-Force admissible (ce modèle est admissible). Achats du 1er janvier au 31 octobre 2026, demande postée au plus tard le 30 novembre 2026 ; offre valide aux États-Unis et au Canada, le Québec n'est pas exclu des termes officiels ; devise du 20 $ non précisée. Vérifié le 2026-10-22.",
+      applies:function(m){ return m.brand === "Toro" && isBatt(m); } },
+    { brand:"Toro", id:"toro-flexiti",
+      title:"Promotion en cours — Financement Flexiti « sur place » sans intérêt",
+      short:"Financement Flexiti « sur place » chez les détaillants Toro participants du Québec : plans à versements mensuels égaux sans intérêt (sur approbation du crédit), montant minimal 500 $, frais annuels de 39,99 $ ; les plans à paiements différés ne sont pas offerts aux résidents du Québec. Aucune date de fin publiée. Vérifié le 2026-10-22.",
+      applies:function(m){ return m.brand === "Toro"; } }
+  ];
+  function modelPromos(m){
+    return PROMO_DATA.filter(function(p){ return p.applies(m); });
+  }
+  function renderPromo(){
+    var order = ["Ariens", "Toro", "Cub Cadet"];
+    var total = 0;
+    var groups = "";
+    order.forEach(function(brand){
+      var list = MODELS.filter(function(m){
+        return m.brand === brand && modelPromos(m).length > 0;
+      });
+      if (!list.length) return;
+      total += list.length;
+      groups += '<div class="promo-group"><h3>' + esc(brand) + '</h3><div class="brand-grid">';
+      list.forEach(function(m){
+        groups += '<button type="button" class="bcard" data-fiche="' + m.id + '">';
+        groups += '<span class="b-photo"><img src="' + esc(m.img) + '" alt="Photo de la souffleuse ' + esc(m.brand + " " + m.name) + '" loading="lazy" /></span>';
+        groups += '<span class="b-body"><span class="b-name">' + esc(m.brand) + " " + esc(m.name) + '</span>';
+        groups += '<span class="b-meta"><span class="badge">' + esc(CLASSES[m.cls]) + '</span>';
+        var w = widthOf(m);
+        if (w) groups += '<span class="badge">' + esc(w) + '</span>';
+        groups += '<span class="badge ' + (isBatt(m) ? "energy-batt" : "energy-gas") + '">' + esc(m.energy) + '</span>';
+        if (m.track) groups += '<span class="badge">Chenilles</span>';
+        groups += '</span>';
+        modelPromos(m).forEach(function(p){
+          groups += '<span class="b-promo"><b>' + esc(p.title) + '</b><span>' + esc(p.short) + '</span></span>';
+        });
+        groups += '<span class="b-open">Fiche détaillée →</span></span></button>';
+      });
+      groups += '</div></div>';
+    });
+    document.getElementById("promoIntro").innerHTML = "<b>" + total
+      + " modèles avec une promotion en cours</b> — promotions des fabricants <b>éligibles au Québec seulement</b>, "
+      + "vérifiées le <b>2026-10-22</b> sur les sources officielles des fabricants. Une marque sans promotion en cours "
+      + "au Québec n'apparaît pas dans cette vue. Touchez un modèle pour ouvrir sa fiche détaillée.";
+    document.getElementById("promoBody").innerHTML = groups;
+  }
+
+  var tabQuiz = document.getElementById("tabQuiz");
+  var tabBrand = document.getElementById("tabBrand");
+  var tabPromo = document.getElementById("tabPromo");
+  function showView(name){
+    tabQuiz.setAttribute("aria-selected", name === "quiz" ? "true" : "false");
+    tabBrand.setAttribute("aria-selected", name === "brand" ? "true" : "false");
+    tabPromo.setAttribute("aria-selected", name === "promo" ? "true" : "false");
+    document.getElementById("viewQuiz").hidden = name !== "quiz";
+    document.getElementById("viewBrand").hidden = name !== "brand";
+    document.getElementById("viewPromo").hidden = name !== "promo";
+    if (name === "brand") renderBrand();
+    if (name === "promo") renderPromo();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+  tabQuiz.addEventListener("click", function(){ showView("quiz"); });
+  tabBrand.addEventListener("click", function(){ showView("brand"); });
+  tabPromo.addEventListener("click", function(){ showView("promo"); });
+
+  refreshButton();
+})();
+</script>
+</body>
+</html>

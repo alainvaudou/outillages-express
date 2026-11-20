@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>Comparatif Souffleuses 2026-2027</title>
+<style>
+  :root{
+    color-scheme:dark;
+    --ink:#eef0f3; --muted:#a3a8b3; --navy:#aab4ff; --navy-bg:#262d6e; --navy-line:#4b57c9; --orange:#ff7a1a;
+    --line:#343945; --bg:#0d0e11; --card:#1a1d24;
+    --c-ariens:#FFE0C2; --c-toro:#FAD7D7; --c-cub:#FFF3B8; --c-ducar:#F6A85C; --c-berco:#D9E2EC;
+    --r-ariens:#392817; --r-toro:#372226; --r-cub:#353217; --r-ducar:#452a0e; --r-berco:#20303f;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;background:var(--bg)}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+  button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
+  img{max-width:100%}
+
+  /* ---------- En-tête fixe : recherche + onglets ---------- */
+  .topbar{position:sticky;top:0;z-index:50;background:#121318;border-bottom:3px solid var(--orange);
+    box-shadow:0 2px 10px rgba(0,0,0,.5);padding:10px 12px 8px}
+  .topbar h1{font-size:19px;line-height:1.2;margin:0 0 2px}
+  .topbar .sub{font-size:12.5px;color:var(--muted);margin:0 0 9px}
+  .back-btn{display:inline-flex;align-items:center;background:#14161c;color:#5fd3a5;border:2px solid #2ea37c;
+    border-radius:10px;font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;text-decoration:none;
+    cursor:pointer;margin:0 0 9px}
+  .back-btn:hover{background:#0b6e4f;color:#ffffff}
+  .back-btn:focus-visible{background:#0b6e4f;color:#ffffff;outline:3px solid #2ea37c;outline-offset:2px}
+  .search{display:flex;gap:8px;align-items:stretch}
+  .search input{flex:1;min-width:0;font-size:16px;padding:9px 12px;border:2px solid var(--navy-line);
+    border-radius:10px;background:#101216;color:var(--ink)}
+  .search input:focus{outline:3px solid rgba(255,122,26,.45);outline-offset:1px}
+  .search .clear{border:2px solid var(--navy-bg);background:var(--navy-bg);color:#fff;border-radius:10px;
+    padding:0 14px;font-size:15px;font-weight:600;cursor:pointer;display:none}
+  .tabs{display:flex;gap:6px;overflow-x:auto;padding:9px 2px 3px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;border:2px solid #3a3f4d;background:#1a1d24;border-radius:999px;padding:7px 13px;
+    font-size:14px;font-weight:700;cursor:pointer;color:var(--ink);min-height:38px}
+  .tab small{font-weight:600;color:var(--muted)}
+  .tab[aria-pressed="true"]{border-color:var(--navy-line);background:var(--navy-bg);color:#fff}
+  .tab[aria-pressed="true"] small{color:#cfd3ee}
+  .tab[data-brand="ariens"]{box-shadow:inset 0 -6px 0 var(--c-ariens)}
+  .tab[data-brand="toro"]{box-shadow:inset 0 -6px 0 var(--c-toro)}
+  .tab[data-brand="cub"]{box-shadow:inset 0 -6px 0 var(--c-cub)}
+  .tab[data-brand="ducar"]{box-shadow:inset 0 -6px 0 var(--c-ducar)}
+  .tab[data-brand="berco"]{box-shadow:inset 0 -6px 0 var(--c-berco)}
+
+  main{max-width:1180px;margin:0 auto;padding:14px 12px 40px}
+  .legend{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+    font-size:13.5px;color:#d4d7dd;margin-bottom:18px}
+  .legend b{color:var(--navy)}
+  .noresult{display:none;background:var(--card);border:2px dashed var(--line);border-radius:12px;
+    padding:26px 16px;text-align:center;font-size:17px;font-weight:700;color:var(--muted)}
+  .noresult.show{display:block}
+
+  /* ---------- Sections de marque ---------- */
+  section.brand{margin-bottom:30px;scroll-margin-top:215px}
+  .brand-head{border-radius:12px;padding:13px 14px 11px;border:1px solid rgba(255,255,255,.14)}
+  .brand-head h2{margin:0;font-size:23px;line-height:1.15}
+  .brand-head .tagline{margin:3px 0 0;font-size:13.5px;color:#c6c9d1}
+  .brand-ariens .brand-head{background:var(--r-ariens)}
+  .brand-toro .brand-head{background:var(--r-toro)}
+  .brand-cub .brand-head{background:var(--r-cub)}
+  .brand-ducar .brand-head{background:var(--r-ducar)}
+  .brand-berco .brand-head{background:var(--r-berco)}
+  .intro{font-size:14px;color:#b9bdc7;margin:10px 2px 12px}
+  h3.bloc{font-size:16.5px;margin:18px 2px 8px}
+
+  /* ---------- Tableau de specs ---------- */
+  .spec-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.spec{border-collapse:collapse;width:100%;font-size:13.5px}
+  table.spec thead th{background:var(--navy-bg);color:#fff;text-align:left;padding:8px 8px;font-size:13px;white-space:nowrap}
+  table.spec td{padding:7px 8px;vertical-align:top;border-top:1px solid #2c3038}
+  table.spec td.m{font-weight:700}
+  table.spec td.n{color:var(--navy);font-weight:600;white-space:nowrap}
+  table.spec td.w{white-space:nowrap}
+  .brand-ariens table.spec tbody tr{background:var(--r-ariens)}
+  .brand-toro table.spec tbody tr{background:var(--r-toro)}
+  .brand-cub table.spec tbody tr{background:var(--r-cub)}
+  .brand-ducar table.spec tbody tr{background:var(--r-ducar)}
+  @media (max-width:760px){
+    table.spec, table.spec tbody, table.spec tr, table.spec td{display:block;width:100%}
+    table.spec thead{display:none}
+    table.spec tr{padding:9px 11px;border-top:1px solid rgba(255,255,255,.14)}
+    table.spec tr:first-child{border-top:none}
+    table.spec td{border:none;padding:1.5px 0}
+    table.spec td.m{font-size:15.5px}
+    table.spec td.n{font-size:14px}
+    table.spec td[data-l]::before{content:attr(data-l) " : ";font-weight:700;color:#9aa0ac;font-size:12.5px}
+  }
+
+  .note{font-size:13.5px;color:#c9ccd4;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:10px 13px;margin-top:10px}
+  .vigilance{background:#2a1e0e;border:2px solid var(--orange);border-radius:12px;
+    padding:12px 14px;font-size:14.5px;margin-top:12px}
+
+  /* ---------- Cartes photos ---------- */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media (min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (min-width:980px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .brand-ariens .card{background:var(--r-ariens)}
+  .brand-toro .card{background:var(--r-toro)}
+  .brand-cub .card{background:var(--r-cub)}
+  .brand-ducar .card{background:var(--r-ducar)}
+  .card .ph{background:#fff;height:148px;display:flex;align-items:center;justify-content:center;padding:8px}
+  .card .ph img{max-height:100%;max-width:100%;object-fit:contain;display:block}
+  .card .ph-none{background:#22252d;color:#9aa0ac;font-size:13px;text-align:center;padding:10px;line-height:1.4}
+  .card .txt{padding:9px 10px 11px;text-align:center}
+  .card .name{font-weight:800;font-size:14.5px;line-height:1.25}
+  .card .num{color:var(--navy);font-weight:700;font-size:13.5px;margin-top:2px;word-break:break-all}
+  .brand-ducar .card .num{color:#ffb066}
+  .card .spec{color:#c2c6cf;font-size:12.5px;margin-top:3px;line-height:1.35}
+  /* ---------- Liens Nº de modèle vers la fiche officielle ---------- */
+  a.model-link{color:var(--navy);font-weight:700;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1.5px}
+  a.model-link::after{content:" ↗";font-size:.85em;font-weight:700}
+  a.model-link:hover,a.model-link:focus-visible{background:rgba(255,255,255,.14);outline:2px solid var(--navy);outline-offset:1px;border-radius:3px}
+  .brand-ducar a.model-link{color:#ffb066}
+  .brand-ducar table.spec td.n a.model-link{color:#ffb066}
+  .pop .pt a.model-link{color:var(--navy)}
+
+  /* ---------- Fenêtre de specs au survol d'une photo ---------- */
+  .card{position:relative}
+  .card:focus{outline:3px solid var(--navy);outline-offset:2px}
+  .pop{position:absolute;left:8px;right:8px;bottom:8px;background:#22252e;border:2px solid var(--navy-line);
+    border-radius:10px;padding:9px 11px 8px;font-size:12.5px;line-height:1.45;text-align:left;
+    box-shadow:0 8px 22px rgba(0,0,0,.6);opacity:0;transform:translateY(8px);pointer-events:none;
+    transition:opacity .16s ease,transform .16s ease;z-index:5}
+  .card:hover .pop,.card:focus-within .pop,.card.open .pop{opacity:1;transform:none;pointer-events:auto}
+  .pop .pt{font-weight:800;font-size:13px;margin-bottom:4px;color:var(--navy)}
+  .pop dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:1px 8px}
+  .pop dt{font-weight:700;color:#9aa0ac}
+  .pop dd{margin:0;font-weight:600;color:var(--ink)}
+  .pop .pn{margin-top:5px;color:#c2c6cf}
+  @media (prefers-reduced-motion: reduce){.pop{transition:none}}
+
+  /* ---------- Accessoires ---------- */
+  .acc-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.acc{border-collapse:collapse;width:100%;font-size:13.5px}
+  table.acc thead th{background:var(--navy-bg);color:#fff;text-align:left;padding:8px}
+  table.acc th.cat, table.acc td{padding:7px 8px;vertical-align:top;border-top:1px solid #2c3038}
+  table.acc td.cat{font-weight:800;background:#232733;white-space:nowrap}
+  table.acc td.a{background:var(--r-ariens)} table.acc td.t{background:var(--r-toro)}
+  table.acc td.c{background:var(--r-cub)} table.acc td.d{background:var(--r-ducar)}
+  @media (max-width:760px){
+    table.acc, table.acc tbody, table.acc tr, table.acc td{display:block;width:100%}
+    table.acc thead{display:none}
+    table.acc tr{border-top:2px solid var(--navy-line);padding:8px 10px}
+    table.acc tr:first-child{border-top:none}
+    table.acc td{border:none;padding:3px 6px;border-radius:6px;margin-top:4px}
+    table.acc td.cat{background:none;padding-left:0;font-size:15px}
+    table.acc td[data-l]::before{content:attr(data-l) " — ";font-weight:800}
+  }
+  /* ---------- Fiches détaillées Bercomac ---------- */
+  .bgrid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media (min-width:760px){.bgrid{grid-template-columns:repeat(2,1fr)}}
+  .bcard{background:var(--card);border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .bcard .ph{background:#fff;height:230px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #2c3038}
+  .bcard .ph img{max-height:100%;max-width:100%;object-fit:contain;display:block}
+  .bcard .ph-none{background:#22252d;color:#9aa0ac;font-size:13.5px;text-align:center;padding:16px;line-height:1.45;height:230px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #2c3038}
+  .bcard .body{padding:12px 14px 14px}
+  .bcard h4{margin:0;font-size:17px;line-height:1.25}
+  .bcard .num{color:var(--navy);font-weight:700;font-size:14px;margin-top:2px}
+  .bsec{margin-top:10px}
+  .bsec h5{margin:0 0 3px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--navy)}
+  .bsec p{margin:0;font-size:13.5px}
+  .bsec ul{margin:0;padding-left:18px;font-size:13.5px}
+  .bsec li{margin:2px 0}
+  .tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:800;vertical-align:1px}
+  .tag-in{background:#1e3320;border:1px solid #4c7a3f;color:#a5d68f}
+  .tag-req{background:#3a2a12;border:1px solid var(--orange);color:#ffb066}
+  .tag-no{background:#232733;border:1px solid var(--line);color:#c2c6cf}
+  .brand-berco table.spec tbody tr{background:var(--r-berco)}
+  footer{font-size:12.5px;color:#8b909b;max-width:1180px;margin:0 auto;padding:0 12px 30px}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="back-btn" id="backBtn" href="../" rel="noopener" aria-label="Retour au portail Outillages Express">← Retour au portail</a>
+  <h1>Comparatif des souffleuses 2026–2027</h1>
+  <p class="sub">Ariens · Toro · Cub Cadet · Ducar — gammes canadiennes officielles, vérifiées modèle par modèle le 12 novembre 2026. Tableaux triés par puissance, puis par largeur. Nouvel onglet <b>Bercomac</b> : attachements pour tracteurs à gazon (ajouté le 17 novembre 2026).</p>
+  <div class="search">
+    <input id="q" type="search" inputmode="search" autocomplete="off"
+      placeholder="Rechercher : nom ou Nº de modèle (ex. Deluxe 28, 921070, DUESB724)…" aria-label="Rechercher un modèle" />
+    <button class="clear" id="clearBtn" type="button">Effacer</button>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="Choisir une marque">
+    <button class="tab" type="button" data-brand="all" aria-pressed="true">Toutes <small>83</small></button>
+    <button class="tab" type="button" data-brand="ariens" aria-pressed="false">Ariens <small>22</small></button>
+    <button class="tab" type="button" data-brand="toro" aria-pressed="false">Toro <small>31</small></button>
+    <button class="tab" type="button" data-brand="cub" aria-pressed="false">Cub Cadet <small>16</small></button>
+    <button class="tab" type="button" data-brand="ducar" aria-pressed="false">Ducar <small>14</small></button>
+    <button class="tab" type="button" data-brand="berco" aria-pressed="false">Bercomac <small>14</small></button>
+    <button class="tab" type="button" data-brand="acc" aria-pressed="false">Accessoires</button>
+  </nav>
+</header>
+
+<main>
+  <div class="legend"><b>HP :</b> * = publié par le fabricant · ≈ = calculé à partir du couple publié (Ariens) · est. = fourchette indicative (Toro et Cub Cadet ne publient ni HP ni couple). Chaque photo est la photo officielle du <b>modèle exact</b> nommé dessous, avec son numéro de modèle. <b>Cliquez un Nº de modèle souligné (↗)</b> — dans le tableau ou sous la photo — pour ouvrir <b>directement la fiche du produit</b> sur le site officiel du fabricant (liens vérifiés modèle par modèle le 16 novembre 2026). <b>Survolez une photo</b> (ou touchez-la sur cellulaire) pour voir ses specs principales en un coup d'œil. <b>Bercomac</b> (onglet séparé) : attachements qui se montent sur un <b>tracteur à gazon à volant</b> — pas des souffleuses autonomes ; chaque fiche donne le contenu du kit, les tracteurs compatibles et ce que l'installation exige en plus.</div>
+
+  <div class="noresult" id="noresult">Aucun résultat</div>
+  <div id="brands"></div>
+
+  <section class="brand brand-berco" id="sec-berco" data-section="berco">
+    <div class="brand-head">
+      <h2>Bercomac <span style="font-size:14px;font-weight:600">· attachements pour tracteurs à gazon</span></h2>
+      <p class="tagline">Entreprise québécoise (Adstock) — souffleuses, lame, balai et cabines qui se montent sur un tracteur à volant. Vente uniquement via les détaillants autorisés (pas de vente directe).</p>
+    </div>
+    <p class="intro">Bercomac ne fait pas de souffleuses autonomes : ce sont des attachements entraînés par le moteur du tracteur. La souffleuse ne demande que 6 HP — tous les tracteurs de jardin &amp; pelouse de 13 HP et plus sont assez puissants (FAQ officielle) ; les kits boutique actuels visent les tracteurs de 16 à 28 HP. Il n'y a pas d'outil en ligne « trouvez votre châssis » : le fit se fait par famille de tracteur (tableau ci-dessous) ou via le détaillant.</p>
+
+    <div class="vigilance"><b>Avant de vendre un attachement Bercomac, vérifiez les 3 morceaux :</b> ① l'accessoire, ② le <b>sous-châssis propre à la marque + série (+ année) du tracteur</b> — requis, il reste sur le tracteur et inclut le mécanisme de relevage (le treuil est inclus en version électrique), ③ le <b>mécanisme d'entraînement</b> — requis pour la souffleuse et le balai, <b>pas</b> pour la lame. Le même sous-châssis sert aux trois accessoires (attache rapide incluse) ; seul le balai demande un adaptateur de plus. <b>Requis mais NON inclus avec la souffleuse : contrepoids arrière d'au moins 100 lb et chaînes à pneus approuvées.</b> Aucun produit Bercomac pour zero-turn ; aucun fit publié pour Ducar ; chez Toro, seuls les anciens GT/LX construits par MTD (2010–2014) fittent.</div>
+
+    <h3 class="bloc">Sous-châssis et mécanismes d'entraînement — par famille de tracteur</h3>
+    <div class="spec-wrap"><table class="spec">
+      <thead><tr><th>Famille de tracteurs</th><th>Sous-châssis</th><th>Entraînement Nordet</th><th>Entraînement Compact</th><th>Relevage</th></tr></thead>
+      <tbody>
+        <tr class="js-item" data-search="sous chassis 700796 entrainement 700797 700798 cub cadet xt1 xt2 nx15 bercomac"><td class="m">Cub Cadet XT1 / XT2 (+ MTD à châssis NX15)</td><td class="n">700796</td><td class="w" data-l="Entr. Nordet">700797</td><td class="w" data-l="Entr. Compact">700798</td><td data-l="Relevage">Électrique</td></tr>
+        <tr class="js-item" data-search="sous chassis 700457 700457-5 entrainement 700459 700459-3 700458 ariens hop husqvarna craftsman bercomac"><td class="m">Construits par H.O.P. — Ariens, Husqvarna, Poulan, Craftsman par H.O.P. (Nº 944… / 917…)</td><td class="n">700457-5</td><td class="w" data-l="Entr. Nordet">700459-3</td><td class="w" data-l="Entr. Compact">700458</td><td data-l="Relevage">Électrique (treuil nº 106125 inclus)</td></tr>
+        <tr class="js-item" data-search="sous chassis 700490 700490-4 entrainement 700492 700491 toro gt lx mtd 1000 1500 bercomac"><td class="m">Construits par MTD séries 1000/1500 — Toro GT/LX, Troy-Bilt, White</td><td class="n">700490-4</td><td class="w" data-l="Entr. Nordet">700492-2</td><td class="w" data-l="Entr. Compact">700491-2</td><td data-l="Relevage">Électrique / treuil</td></tr>
+        <tr class="js-item" data-search="sous chassis 700264 700264-5 entrainement 700443 700265 cub cadet 2500 bercomac"><td class="m">Cub Cadet série 2500</td><td class="n">700264-5</td><td class="w" data-l="Entr. Nordet">700443-1</td><td class="w" data-l="Entr. Compact">700265-4</td><td data-l="Relevage">—</td></tr>
+        <tr class="js-item" data-search="sous chassis 700413 entrainement 700415 700414 hop ancienne generation bercomac"><td class="m">H.O.P. — génération antérieure</td><td class="n">700413-1</td><td class="w" data-l="Entr. Nordet">700415</td><td class="w" data-l="Entr. Compact">700414-1</td><td data-l="Relevage">—</td></tr>
+        <tr class="js-item" data-search="sous chassis 700225 cub cadet anciens tracteurs jardin bercomac"><td class="m">Cub Cadet — anciens tracteurs de jardin</td><td class="n">700225</td><td class="w" data-l="Entr. Nordet">non publié</td><td class="w" data-l="Entr. Compact">non publié</td><td data-l="Relevage">—</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">Des manuels officiels de sous-châssis existent aussi pour John Deere séries 100/LA/D, X300/X500, Cub Cadet XT3 et série 2000, Murray et Sabre — numéros non relevés dans cette passe. L'entraînement est <b>spécifique à l'accessoire</b> : Nordet ≠ Compact, même pour une même famille de tracteur. Source : index officiel des manuels Bercomac.</div>
+
+    <h3 class="bloc">Les attachements — contenu du kit, fit et installation</h3>
+    <div class="bgrid">
+
+      <article class="bcard js-item" data-search="souffleuse berco 44 nordet northeast 700474 700474-3 nosku-6 kit tracteur cub cadet xt ariens toro bercomac">
+        <div class="ph"><img src="assets/berco-700474.jpg" alt="Souffleuse Berco 44 po Nordet montée à l'avant d'un tracteur à gazon, dans la neige" loading="lazy"></div>
+        <div class="body">
+          <h4>Souffleuse Berco 44 po Nordet (Northeast)</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/nosku-6-souffleuse-berco-44-nordet" target="_blank" rel="noopener noreferrer">700474-3</a> · kit boutique « nosku-6 »</div>
+          <div class="bsec"><h5>Le kit comprend</h5><ul>
+            <li>La souffleuse 2 phases de 44 po</li>
+            <li>Le sous-châssis conçu pour la famille du tracteur choisi (inclut le relevage ; treuil inclus en version électrique)</li>
+            <li>Le mécanisme d'entraînement Nordet (courroie incluse)</li>
+          </ul><p>Pas de Nº de kit unique : le Nº varie selon la variante de tracteur choisie.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Tracteurs à volant de <b>16 à 28 HP</b> : Cub Cadet XT1/XT2/XT3 (2015 et +, 5e caractère du Nº de modèle = « A ») et séries 1000/2000 · construits par H.O.P. (dont <b>Ariens</b>) · construits par MTD (dont <b>Toro GT/LX 2010–2014 seulement</b>) · John Deere séries 100/LA/D/E/S/X300/X500. Aucun fit zero-turn ; aucun fit Ducar publié.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><ul>
+            <li><span class="tag tag-in">Inclus</span> Sous-châssis + entraînement Nordet, requis (ex. XT1/XT2 : 700796 + 700797 — tableau ci-dessus)</li>
+            <li><span class="tag tag-req">Requis — non inclus</span> Contrepoids arrière d'<b>au moins 100 lb</b> (Nº selon le tracteur)</li>
+            <li><span class="tag tag-req">Requis — non inclus</span> Chaînes à pneus approuvées par le manufacturier (espacement aux 2 mailles, emballage de 2)</li>
+            <li>Manuel : ne pas opérer dans une pente de plus de 10° ; retirer les contrepoids quand l'accessoire est enlevé</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="souffleuse berco 48 nordet northeast 700478 700478-3 nosku-7 kit tracteur cub cadet xt ariens toro bercomac">
+        <div class="ph"><img src="assets/berco-700478.jpg" alt="Souffleuse Berco 48 po Nordet pour tracteur à gazon" loading="lazy"></div>
+        <div class="body">
+          <h4>Souffleuse Berco 48 po Nordet (Northeast)</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/nosku-7-souffleuse-berco-48-nordet" target="_blank" rel="noopener noreferrer">700478-3</a> · kit boutique « nosku-7 »</div>
+          <div class="bsec"><h5>Le kit comprend</h5><ul>
+            <li>La souffleuse 2 phases de 48 po</li>
+            <li>Le sous-châssis conçu pour la famille du tracteur choisi (inclut le relevage ; treuil inclus en version électrique)</li>
+            <li>Le mécanisme d'entraînement Nordet (courroie incluse)</li>
+          </ul><p>Pas de Nº de kit unique : le Nº varie selon la variante de tracteur choisie.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Identique à la 44 po : tracteurs à volant de <b>16 à 28 HP</b> — Cub Cadet XT1/XT2/XT3 et séries 1000/2000 · construits par H.O.P. (dont <b>Ariens</b>) · construits par MTD (dont <b>Toro GT/LX 2010–2014 seulement</b>) · John Deere 100/LA/D/E/S/X300/X500. Aucun fit zero-turn ; aucun fit Ducar publié.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><ul>
+            <li><span class="tag tag-in">Inclus</span> Sous-châssis + entraînement Nordet, requis (ex. XT1/XT2 : 700796 + 700797 — tableau ci-dessus)</li>
+            <li><span class="tag tag-req">Requis — non inclus</span> Contrepoids arrière d'<b>au moins 100 lb</b> (Nº selon le tracteur)</li>
+            <li><span class="tag tag-req">Requis — non inclus</span> Chaînes à pneus approuvées par le manufacturier (espacement aux 2 mailles, emballage de 2)</li>
+            <li>Manuel : ne pas opérer dans une pente de plus de 10° ; retirer les contrepoids quand l'accessoire est enlevé</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="souffleuse berco 40 compact compacte 700465 tracteur bercomac">
+        <div class="ph-none">Photo officielle de ce modèle exact<br>non disponible sur bercomac.com —<br>produit documenté par les manuels officiels seulement</div>
+        <div class="body">
+          <h4>Souffleuse Berco 40 po Compact</h4>
+          <div class="num">Nº 700465 · anc. gén. 700255 · Deluxe 700210 (40 po) / 700211 (44 po)</div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>Aucun kit boutique actuel repéré : la Compact s'installe avec un <b>sous-châssis + un mécanisme d'entraînement Compact</b> propres à la famille du tracteur (ex. Cub Cadet XT : 700796 + 700798 ; H.O.P. : 700457-5 + 700458).</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Mêmes familles de tracteurs que les Nordet — manuels de sous-châssis « 40 po Compact » publiés pour H.O.P., MTD, Cub Cadet, John Deere, Craftsman, Sabre, etc.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><ul>
+            <li><span class="tag tag-req">Requis</span> Sous-châssis + entraînement <b>Compact</b> (Nº selon la famille — tableau ci-dessus ; ≠ entraînement Nordet)</li>
+            <li>Contrepoids arrière et chaînes : la règle générale des manuels Bercomac s'applique ; la formulation exacte propre au manuel de la Compact n'a pas été relevée</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="lame neige utilitaire berco 48 700463 tracteur bercomac">
+        <div class="ph"><img src="assets/berco-700463.jpg" alt="Lame à neige Berco 48 po montée à l'avant d'un tracteur à gazon" loading="lazy"></div>
+        <div class="body">
+          <h4>Lame à neige Berco 48 po (lame utilitaire)</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/nosku-9-lame-a-neige-berco-48" target="_blank" rel="noopener noreferrer">700463</a> · anc. gén. 700266</div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>La lame seule. Elle se fixe par l'<b>attache rapide du sous-châssis déjà installé</b> — aucune pièce additionnelle pour passer de la souffleuse à la lame (FAQ officielle).</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Tout tracteur équipé d'un sous-châssis Bercomac — le même que pour la souffleuse et le balai rotatif (manuel officiel).</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><ul>
+            <li><span class="tag tag-req">Requis</span> Le sous-châssis propre au tracteur</li>
+            <li><span class="tag tag-no">Non requis</span> Le mécanisme d'entraînement — la lame n'en a pas besoin (FAQ officielle)</li>
+            <li>Contrepoids arrière : requis pour une plus grande sécurité et une meilleure traction (Nº selon le tracteur)</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="balai rotatif berco 48 700380 nylon 700381 polypropylene tracteur bercomac">
+        <div class="ph"><img src="assets/berco-balai.jpg" alt="Balai rotatif Berco 48 po à brosse bleue monté à l'avant d'un tracteur à gazon" loading="lazy"></div>
+        <div class="body">
+          <h4>Balai rotatif Berco 48 po</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/nosku-10-balai-berco-48" target="_blank" rel="noopener noreferrer">700380 (brosse nylon) · 700381 (brosse polypropylène)</a> — une seule fiche pour les deux brosses</div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>Le balai rotatif avec la brosse choisie (nylon = 700380 ; polypropylène = 700381, rév. -3). Usages publiés au manuel : balayage de neige, déchaumage de pelouse et ramassage de feuilles. Contenu pièce par pièce non publié.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Le même sous-châssis que la souffleuse et la lame — mêmes familles de tracteurs. Entraînement PTO par courroie ou par arbre selon le tracteur.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><ul>
+            <li><span class="tag tag-req">Requis</span> Sous-châssis propre au tracteur + mécanisme d'entraînement (comme la souffleuse)</li>
+            <li><span class="tag tag-req">Requis</span> Un <b>adaptateur de balai</b> — son Nº dépend du sous-châssis et n'est pas publié de façon centralisée</li>
+            <li>Contrepoids arrière : même règle que les autres accessoires avant</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="cabine hiver berco 34 700271 tracteur bercomac">
+        <div class="ph"><img src="assets/berco-700271.jpg" alt="Cabine d'hiver Berco 34 po installée sur un tracteur à gazon dans la neige" loading="lazy"></div>
+        <div class="body">
+          <h4>Cabine d'hiver Berco 34 po</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/700271-cabine-dhiver-berco-34" target="_blank" rel="noopener noreferrer">700271</a></div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>Contenu du kit non publié dans les sources officielles relevées.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Cabine de type universel : « s'adapte sur la plupart des tracteurs de jardin &amp; pelouse » (manuel officiel). Aucun sous-châssis Bercomac requis.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><p>Accessoires requis pour l'installation : non publiés.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="cabine hiver berco 40 700423 tracteur bercomac">
+        <div class="ph"><img src="assets/berco-700423.jpg" alt="Cabine d'hiver Berco 40 po pour tracteur à gazon" loading="lazy"></div>
+        <div class="body">
+          <h4>Cabine d'hiver Berco 40 po</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/700423-cabine-dhiver-berco-40" target="_blank" rel="noopener noreferrer">700423</a></div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>Contenu du kit non publié dans les sources officielles relevées.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Cabine de type universel : « s'adapte sur la plupart des tracteurs de jardin &amp; pelouse » (manuel officiel). Aucun sous-châssis Bercomac requis.</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><p>Accessoires requis pour l'installation : non publiés.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="cabine moustiquaire screen cab berco 700313 tracteur bercomac">
+        <div class="ph-none">Photo officielle de ce modèle exact<br>non disponible sur bercomac.com —<br>produit documenté par les manuels officiels seulement</div>
+        <div class="body">
+          <h4>Cabine moustiquaire (screen cab) Berco</h4>
+          <div class="num">Nº 700313</div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>Contenu du kit non publié dans les sources officielles relevées.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Type universel — « fits on a wide variety of lawn and garden tractors » (manuel officiel, EN).</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><p>Accessoires requis pour l'installation : non publiés.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="rotoculteur rototiller arriere berco 700312 tracteur bercomac">
+        <div class="ph-none">Photo officielle de ce modèle exact<br>non disponible sur bercomac.com —<br>produit documenté par les manuels officiels seulement</div>
+        <div class="body">
+          <h4>Rotoculteur arrière Berco</h4>
+          <div class="num">Nº 700312</div>
+          <div class="bsec"><h5>Le kit comprend</h5><p>« Comes complete with drive &amp; manual lift mechanisms &amp; mounting hardware » : le mécanisme d'entraînement, le mécanisme de relevage manuel et la quincaillerie de montage sont <b>inclus</b>.</p></div>
+          <div class="bsec"><h5>Ça fitte sur</h5><p>Montage <b>à l'arrière</b> des tracteurs de jardin &amp; pelouse de <b>14 à 25 HP</b>. Ne passe pas par le sous-châssis avant Bercomac (mécanismes propres inclus).</p></div>
+          <div class="bsec"><h5>Installation — à prévoir</h5><p><span class="tag tag-in">Tout inclus</span> Aucun autre accessoire publié requis.</p></div>
+        </div>
+      </article>
+    </div>
+
+    <h3 class="bloc">Options complémentaires officielles (souffleuses Bercomac)</h3>
+    <div class="bgrid">
+      <article class="bcard js-item" data-search="patins extra robustes berco 700243 gravier souffleuse bercomac">
+        <div class="ph"><img src="assets/berco-700243.jpg" alt="Patins extra-robustes Bercomac 700243" loading="lazy"></div>
+        <div class="body">
+          <h4>Patins extra-robustes</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/700243-patin-extra-robuste" target="_blank" rel="noopener noreferrer">700243</a></div>
+          <div class="bsec"><h5>Usage / fit</h5><p>« Pour les entrées de gravier » — emballage de 2. Option des souffleuses Bercomac (page « Options &amp; accessoires » du manuel Nordet).</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="couteaux neige drift cutters berco 700260 souffleuse bercomac">
+        <div class="ph"><img src="assets/berco-700260.jpg" alt="Couteaux à neige Bercomac 700260" loading="lazy"></div>
+        <div class="body">
+          <h4>Couteaux à neige (drift cutters)</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/700260-couteaux-a-neige" target="_blank" rel="noopener noreferrer">700260</a></div>
+          <div class="bsec"><h5>Usage / fit</h5><p>« Pour souffleuses Compacte &amp; Nordet » — permet de couper les amoncellements de neige. Un ancien manuel mentionne un nécessaire d'ajustement pour certaines souffleuses Compact.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="ajustement deflecteur manuel berco 700239 souffleuse bercomac">
+        <div class="ph"><img src="assets/berco-700239.jpg" alt="Nécessaire d'ajustement manuel du déflecteur Bercomac 700239" loading="lazy"></div>
+        <div class="body">
+          <h4>Ajustement du déflecteur — manuel</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/ajustement-manuel-du-deflecteur" target="_blank" rel="noopener noreferrer">700239</a></div>
+          <div class="bsec"><h5>Usage / fit</h5><p>« Permet d'ajuster le déflecteur depuis le siège du tracteur. » Option des souffleuses Bercomac.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="deflecteur electrique berco 700526 souffleuse bercomac">
+        <div class="ph"><img src="assets/berco-700526.jpg" alt="Ensemble d'ajustement électrique du déflecteur Bercomac" loading="lazy"></div>
+        <div class="body">
+          <h4>Déflecteur électrique</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/deflecteur-electrique" target="_blank" rel="noopener noreferrer">700526</a></div>
+          <div class="bsec"><h5>Usage / fit</h5><p>Ajustement du déflecteur depuis le siège du tracteur. <b>À confirmer au comptoir :</b> deux pages homonymes existent sur bercomac.com, dont une portant le Nº 700666 (un schéma) — le site ne permet pas de confirmer laquelle porte le 700526 ; la page principale est retenue ici.</p></div>
+        </div>
+      </article>
+
+      <article class="bcard js-item" data-search="deflecteur rotation goulotte electrique berco 700518 souffleuse bercomac">
+        <div class="ph"><img src="assets/berco-700518.jpg" alt="Déflecteur et rotation de goulotte électriques Bercomac 700518" loading="lazy"></div>
+        <div class="body">
+          <h4>Déflecteur + rotation de goulotte électriques</h4>
+          <div class="num">Nº <a class="model-link" href="https://bercomac.com/fr_CA/products/goulotte-et-deflecteur-electrique" target="_blank" rel="noopener noreferrer">700518</a></div>
+          <div class="bsec"><h5>Usage / fit</h5><p>« Permet d'ajuster le déflecteur ou tourner la goulotte depuis le siège du tracteur. » La variante « pour souffleuse Deluxe et Compact » a sa propre page, mais sans photo officielle valide.</p></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="note"><b>Sources Bercomac :</b> fiches produits bercomac.com/fr_CA, manuels du propriétaire officiels et FAQ officielle Bercomac — vérifiés le 17 novembre 2026. L'installation professionnelle n'est pas requise (manuel fourni), mais recommandée si on n'est pas à l'aise en mécanique. Hors périmètre : la gamme <b>Vantage</b> (66 po nº 700968-1-33V, 72 po nº 700969-1-33V) vise les tracteurs compacts à attache frontale « Skid Steer » avec moteur propre — pas les tracteurs à gazon.</div>
+  </section>
+
+  <section class="brand" id="sec-acc" data-section="acc">
+    <div class="brand-head" style="background:#232733">
+      <h2>Accessoires — l'essentiel, par marque</h2>
+      <p class="tagline">Numéros de pièce officiels. « Par taille » ou « par pneu » = ça dépend de la grandeur de la machine ou du pneu, pas du modèle exact.</p>
+    </div>
+    <div class="acc-wrap" style="margin-top:12px">
+      <table class="acc" id="accTable">
+        <thead><tr><th>Catégorie</th><th>Ariens</th><th>Toro</th><th>Cub Cadet</th><th>Ducar</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="note"><b>Notes :</b> les goupilles de cisaillement diffèrent par série — Ariens 53200500 (Classic/Compact, 1/4 po) vs 52100100 (Deluxe et +, 5/16 po), non interchangeables · Cub Cadet 3X a ses propres goupilles (738-05273 et 738-06654 pour l'accélérateur) · les chaînes ne vont pas sur les modèles à chenilles · « n.p. » = non publié par le fabricant. Photos : ariens.com, toro.com/en-ca, cubcadet.ca, ducar.ca (novembre 2026).</div>
+  </section>
+</main>
+
+<footer>Comparatif des souffleuses 2026-2027 — Outillages Express, référence interne. Gammes canadiennes officielles vérifiées le 12 novembre 2026. Section Bercomac (attachements pour tracteurs à gazon) ajoutée le 17 novembre 2026, sources bercomac.com.</footer>
+
+<script>
+"use strict";
+/* Données exactes : build_merged.py (listes *_ROWS, paragraphes Toro 60V / autres appareils,
+   encadré Ducar, note Cub Cadet, tableau ACC, appels card() pour les photos). */
+var BRANDS = [
+{
+  id:"ariens", name:"Ariens",
+  tagline:"Moteurs Ariens AX (faits par LCT), direction Auto-Turn sur tous les 2 phases, garantie 3 ans",
+  intro:"Séries : Path-Pro et Professional 21 (1 phase) → Classic → Compact → Deluxe → Platinum → Professional.",
+  rows:[
+    ["Path-Pro 212E","938036","21 po","212 cc","≈ 6,9 HP","2,6 L","1 phase, démarrage électrique"],
+    ["Path-Pro 212EC","938037","21 po","212 cc","≈ 6,9 HP","2,6 L","1 phase, goulotte télécommandée"],
+    ["Professional 21","938035","21 po","212 cc","n.p.","n.p.","1 phase commerciale, goulotte télécommandée (garantie 3 ans / 1 an comm.)"],
+    ["Classic 24","920036","24 po","212 cc","≈ 6,9 HP","2,6 L","Le 2 phases Ariens le moins cher"],
+    ["Compact 24","920034","24 po","224 cc","≈ 7,2 HP","2,6 L","Léger, rangement facile"],
+    ["Compact 24 RapidTrak","920035","24 po","224 cc","≈ 7,2 HP","2,6 L","Chenilles pour les pentes"],
+    ["Deluxe 24","921069","24 po","252 cc","≈ 8,6 HP","2,6 L","Cœur de gamme"],
+    ["Deluxe 28","921070","28 po","252 cc","≈ 8,6 HP","2,6 L","Cœur de gamme"],
+    ["Deluxe 28 Whiteout","921079","28 po","252 cc","≈ 8,6 HP","2,6 L","Édition blanche"],
+    ["Deluxe 28 SHO","921072","28 po","301 cc","≈ 9,9 HP","4,4 L","Gros moteur + gros réservoir"],
+    ["Deluxe 30","921071","30 po","301 cc","≈ 9,9 HP","4,4 L","Poignées chauffantes"],
+    ["Deluxe 30 EFI","921049","30 po","306 cc EFI","≈ 10,3 HP","1,2 L","Injection électronique — petit réservoir, à savoir"],
+    ["Platinum 24 SHO EFI","921066","24 po","369 cc EFI","≈ 11,7 HP","2,8 L","EFI, poignées chauffantes (aussi vendu « Great Lakes »)"],
+    ["Platinum 24 SHO","921074","24 po","389 cc","≈ 13,0 HP","n.p.","Poignées chauffantes"],
+    ["Platinum 28 RapidTrak SHO","921073","28 po","389 cc","≈ 13,0 HP","n.p.","Chenilles, poignées chauffantes"],
+    ["Platinum 30 SHO","921075","30 po","420 cc","≈ 14,4 HP","n.p.","Le plus gros moteur résidentiel"],
+    ["Professional 28","926093","28 po","420 cc","≈ 14,4 HP","5,5 L","Commercial, admission 23,5 po"],
+    ["Professional 28 Alpine","926091","28 po","420 cc","≈ 14,4 HP","2,8 L","Commercial à chenilles"],
+    ["Professional 32","926092","32 po","420 cc","≈ 14,4 HP","5,5 L","Commercial, admission 23,5 po"],
+    ["Professional 32 Mountaineering","926521","32 po","420 cc","≈ 14,4 HP","7,0 L","Chenilles, le plus gros réservoir"],
+    ["Professional Kraken 32","926520","32 po","420 cc EFI","≈ 14,4 HP","n.p.","Hydrostatique, chenilles, barre DEL"],
+    ["Professional 36","926081","36 po","420 cc","≈ 14,4 HP","2,8 L","Le plus large de la gamme"]
+  ],
+  cards:[
+    ["Path-Pro 212E","938036","Path-Pro · 21 po · ≈ 6,9 HP","ariens-938036.jpg"],
+    ["Path-Pro 212EC","938037","Path-Pro · 21 po · goulotte télécommandée","ariens-938037.jpg"],
+    ["Professional 21","938035","1 phase commerciale · 21 po","ariens-938035.jpg"],
+    ["Classic 24","920036","Classic · 24 po · ≈ 6,9 HP","model-ariens-classic-24.jpg"],
+    ["Compact 24","920034","Compact · 24 po · ≈ 7,2 HP","model-ariens-compact-24.jpg"],
+    ["Compact 24 RapidTrak","920035","Compact · 24 po · chenilles","model-ariens-compact-24-rapidtrak.jpg"],
+    ["Deluxe 24","921069","Deluxe · 24 po · ≈ 8,6 HP","model-ariens-deluxe-24.jpg"],
+    ["Deluxe 28","921070","Deluxe · 28 po · ≈ 8,6 HP","model-ariens-deluxe-28.jpg"],
+    ["Deluxe 28 Whiteout","921079","Deluxe · 28 po · ≈ 8,6 HP","model-ariens-deluxe-28-whiteout.jpg"],
+    ["Deluxe 28 SHO","921072","Deluxe · 28 po · ≈ 9,9 HP","model-ariens-deluxe-28-sho.jpg"],
+    ["Deluxe 30","921071","Deluxe · 30 po · ≈ 9,9 HP","model-ariens-deluxe-30.jpg"],
+    ["Deluxe 30 EFI","921049","Deluxe · 30 po · injection EFI","model-ariens-deluxe-30-efi.jpg"],
+    ["Platinum 24 SHO EFI","921066","Platinum · 24 po · injection EFI","ariens-921066.jpg"],
+    ["Platinum 24 SHO","921074","Platinum · 24 po · ≈ 13,0 HP","model-ariens-platinum-24-sho.jpg"],
+    ["Platinum 28 RapidTrak SHO","921073","Platinum · 28 po · chenilles","model-ariens-platinum-28-rapidtrak.jpg"],
+    ["Platinum 30 SHO","921075","Platinum · 30 po · ≈ 14,4 HP","model-ariens-platinum-30-sho.jpg"],
+    ["Professional 28","926093","Professional · 28 po","model-ariens-professional-28.jpg"],
+    ["Professional 28 Alpine","926091","Professional · 28 po · chenilles","model-ariens-professional-28-alpine.jpg"],
+    ["Professional 32","926092","Professional · 32 po","model-ariens-professional-32.jpg"],
+    ["Professional 32 Mountaineering","926521","Professional · 32 po · chenilles","model-ariens-professional-32-mountaineering.jpg"],
+    ["Professional Kraken 32","926520","Professional · 32 po · hydrostatique","model-ariens-kraken-32.jpg"],
+    ["Professional 36","926081","Professional · 36 po","model-ariens-professional-36.jpg"]
+  ],
+  after:""
+},
+{
+  id:"toro", name:"Toro",
+  tagline:"Moteurs Toro Premium (faits par Loncin), goulotte Quick Stick, garantie 3 ans (5 ans pour les TRX)",
+  intro:"Séries : Power Clear (1 phase) → SnowMaster (hybride rapide) → Power Max → Power Max HD → Power TRX HD (chenilles), plus les versions 60V.",
+  rows:[
+    ["Power Clear 518 ZR","38474","18 po","99 cc","est. 3,5–4,5 HP","1,3 L","La plus petite Toro, à rappel"],
+    ["Power Clear 518 ZE","38475","18 po","99 cc","est. 3,5–4,5 HP","1,3 L","Démarrage électrique"],
+    ["Power Clear 721 R","38752","21 po","212 cc","est. 6,5–7,5 HP","2,2 L","1 phase à rappel"],
+    ["Power Clear 721 E","38753","21 po","212 cc","est. 6,5–7,5 HP","2,2 L","Démarrage électrique"],
+    ["Power Clear 721 R-C","38754","21 po","212 cc","est. 6,5–7,5 HP","2,2 L","Version déneigeurs (rappel)"],
+    ["Power Clear 721 QZE","38756","21 po","212 cc","est. 6,5–7,5 HP","2,2 L","Quick Stick + démarrage électrique"],
+    ["SnowMaster 724 QXE","36002","24 po","212 cc","est. 6,5–7,5 HP","2,2 L","Avance tout seul, très rapide"],
+    ["Power Max 724 OE","37807","24 po","212 cc","est. 6,5–7,5 HP","2,1 L","Le plus petit Power Max"],
+    ["Power Clear 821 QZE","38757","21 po","252 cc","est. 8–9 HP","2,8 L","Quick Stick + démarrage électrique"],
+    ["Power Clear 821 R-C","38755","21 po","252 cc","est. 8–9 HP","2,9 L","Version déneigeurs (rappel)"],
+    ["Power Max 824 OE","37798","24 po","252 cc","est. 8–9 HP","2,1 L","Le 2 phases d'entrée"],
+    ["SnowMaster 824 QXE","36003","24 po","252 cc","est. 8–9 HP","2,2 L","Avance tout seul, Quick Stick"],
+    ["Power Max 826 OAE","37799","26 po","252 cc","est. 8–9 HP","2,9 L","Direction sans gâchette, phare DEL"],
+    ["Power Max 826 OHAE","37805","26 po","252 cc","est. 8–9 HP","3,2 L","Poignées chauffantes + phare DEL"],
+    ["Power Max HD 828 OAE","38838","28 po","252 cc","est. 8–9 HP","2,9 L","Châssis renforcé HD"],
+    ["Power Max HD 1030 OHAE","38830","30 po","302 cc","est. 9,5–11 HP","4,5 L","Poignées chauffantes, gros réservoir"],
+    ["Power Max HD 1232 OHXE","38842","32 po","375 cc","est. 11–13 HP","n.p.","Servodirection, poignées chauffantes"],
+    ["Commercial Power Max HD 1428","38843","28 po","420 cc","est. 12–14 HP","4,5 L","Moteur 420, usage commercial"],
+    ["Commercial Power Max HD 1432","38844","32 po","420 cc","est. 12–14 HP","4,5 L","Moteur 420, usage commercial"],
+    ["Power TRX HD 1428 (chenilles)","38890","28 po","420 cc","est. 12–14 HP","4,5 L","Chenilles hydrostatiques, garantie 5 ans"],
+    ["Power TRX HD 1432 (chenilles)","38891","32 po","420 cc","est. 12–14 HP","4,5 L","Chenilles hydrostatiques, garantie 5 ans"]
+  ],
+  cards:[
+    ["Power Clear 518 ZR","38474","Power Clear · 18 po · 99 cc","toro-38474.jpg"],
+    ["Power Clear 518 ZE","38475","Power Clear · 18 po · démarrage élect.","toro-38475.jpg"],
+    ["Power Clear 721 R","38752","Power Clear · 21 po · rappel","toro-38752.jpg"],
+    ["Power Clear 721 E","38753","Power Clear · 21 po · démarrage élect.","toro-38753.jpg"],
+    ["Power Clear 721 R-C","38754","Power Clear · 21 po · déneigeurs","model-toro-power-clear-721-r-c.jpg"],
+    ["Power Clear 721 QZE","38756","Power Clear · 21 po · Quick Stick","toro-38756.jpg"],
+    ["Power Clear 821 QZE","38757","Power Clear · 21 po · 252 cc","toro-38757.jpg"],
+    ["Power Clear 821 R-C","38755","Power Clear · 21 po · déneigeurs","model-toro-power-clear-821-rc.jpg"],
+    ["SnowMaster 724 QXE","36002","SnowMaster · 24 po","model-toro-snowmaster-724-qxe.jpg"],
+    ["SnowMaster 824 QXE","36003","SnowMaster · 24 po","model-toro-snowmaster-824-qxe.jpg"],
+    ["Power Max 724 OE","37807","Power Max · 24 po · 212 cc","toro-37807.jpg"],
+    ["Power Max 824 OE","37798","Power Max · 24 po","model-toro-power-max-824-oe.jpg"],
+    ["Power Max 826 OAE","37799","Power Max · 26 po","model-toro-power-max-826-oae.jpg"],
+    ["Power Max 826 OHAE","37805","Power Max · 26 po · poignées chauffantes","toro-37805.jpg"],
+    ["Power Max HD 828 OAE","38838","Power Max HD · 28 po","model-toro-power-max-hd-828-oae.jpg"],
+    ["Power Max HD 1030 OHAE","38830","Power Max HD · 30 po","model-toro-power-max-hd-1030-ohae.jpg"],
+    ["Power Max HD 1232 OHXE","38842","Power Max HD · 32 po","model-toro-power-max-hd-1232-ohxe.jpg"],
+    ["Commercial Power Max HD 1428","38843","Power Max HD · 28 po · 420 cc","toro-38843.jpg"],
+    ["Commercial Power Max HD 1432","38844","Power Max HD · 32 po · 420 cc","toro-38844.jpg"],
+    ["Power TRX HD 1428","38890","Power TRX HD · 28 po · chenilles","model-toro-power-trx-hd-1428-ohxe.jpg"],
+    ["Power TRX HD 1432","38891","Power TRX HD · 32 po · chenilles","model-toro-power-trx-hd-1432-ohxe.jpg"],
+    ["Power Clear e21 — 60V","39901","Power Clear · 21 po · 1 × 7,5 Ah","model-toro-power-clear-e21.jpg"],
+    ["Power Clear e21 — 60V","39902","Power Clear · 21 po · 2 × 6,0 Ah","toro-39902.jpg"],
+    ["Power Clear e21 Self-Propel — 60V","39921","Power Clear · 21 po · autopropulsée","toro-39921.jpg"],
+    ["SnowMaster 60V","39914","SnowMaster · 24 po · 1 × 10,0 Ah","model-toro-snowmaster-60v.jpg"],
+    ["SnowMaster 60V","39915","SnowMaster · 24 po · 10,0 + 5,0 Ah","model-toro-snowmaster-60v-39915.jpg"],
+    ["Power Max e24 — 60V","39924","Power Max · 24 po · 2 × 6,0 Ah","model-toro-power-max-e24.jpg"],
+    ["Power Max e24 — 60V","39925","Power Max · 24 po · 1 × 10,0 Ah","toro-39925.jpg"],
+    ["Power Max e26 — 60V","39926","Power Max · 26 po · 2 × 7,5 Ah","model-toro-power-max-e26.jpg"],
+    ["Power Shovel — 60V","39909","Pelle électrique · 12 po","toro-39909.jpg"],
+    ["Power Curve 1800","38381","Souffleuse filaire · 18 po · 15 A","toro-38381.jpg"]
+  ],
+  after:'<div class="note"><b>Toro 60V (batterie)</b> — Power Clear e21 nº 39901 (21 po, 1 × 7,5 Ah) · e21 nº 39902 (21 po, 2 × 6,0 Ah) · e21 Self-Propel nº 39921 (21 po, 1 × 10,0 Ah, autopropulsée) · SnowMaster 60V nº 39914 (24 po, 1 × 10,0 Ah) · nº 39915 (24 po, 1 × 10,0 + 1 × 5,0 Ah, phare DEL) · Power Max e24 nº 39924 (24 po, 2 × 6,0 Ah) · e24 nº 39925 (24 po, 1 × 10,0 Ah) · Power Max e26 nº 39926 (26 po, 2 × 7,5 Ah, poignées chauffantes). Garantie 2–3 ans + 3 ans sur les batteries.</div>'
+       + '<div class="note"><b>Autres appareils à neige Toro</b> — Power Shovel 60V nº 39909 (pelle électrique 12 po, 1 × 2,5 Ah) · Power Curve 1800 nº 38381 (souffleuse filaire 18 po, 15 A).</div>'
+},
+{
+  id:"cub", name:"Cub Cadet",
+  tagline:"Moteurs Cub Cadet OHV (Powermore/MTD), garantie 3 ans",
+  intro:"Séries : 1X (1 phase) → 2X → 2X HD/MAX → 3X (3 phases : un accélérateur central pousse la neige, meilleur en neige lourde) → TRAC (chenilles). Gros réservoirs de 4,7 L dès les 357 cc.",
+  rows:[
+    ["1X 21 LHP","31PM2T6C710","21 po","208 cc","est. 6–7 HP","1,9 L","1 phase, phare DEL"],
+    ["2X 24 (de base)","31AS6KXRA56","24 po","208 cc","est. 6–7 HP","n.p.","Le moins cher des 2X, sans IntelliPower"],
+    ["2X 24 IntelliPower","31BM5HVRB10","24 po","243 cc","est. 7,5–8,5 HP","1,9 L","Le 2 phases d'entrée IntelliPower"],
+    ["2X 26 IntelliPower","31AM5HVSB56","26 po","243 cc","est. 7,5–8,5 HP","1,9 L",""],
+    ["2X 26 TRAC IntelliPower","31AH7IVSB10","26 po","272 cc","est. 8,5–9,5 HP","2,8 L","Chenilles"],
+    ["2X 28 IntelliPower","31AH5IVTB10","28 po","272 cc","est. 8,5–9,5 HP","2,8 L",""],
+    ["3X 26 IntelliPower","31AH5JVAB10","26 po","357 cc","est. 10,5–12 HP","4,7 L","3 phases, poignées chauffantes"],
+    ["3X 26 TRAC IntelliPower","n.p. †","26 po","357 cc","est. 10,5–12 HP","n.p.","3 phases à chenilles — vendu via concessionnaires"],
+    ["3X 28 IntelliPower","31AH5JVBB09","28 po","357 cc","est. 10,5–12 HP","4,7 L","3 phases, poignées chauffantes"],
+    ["2X 30 IntelliPower","31AH5JVUB10","30 po","357 cc","est. 10,5–12 HP","4,7 L","Poignées chauffantes, servodirection"],
+    ["2X 30 MAX IntelliPower","31AH8JVSB10","30 po","357 cc","est. 10,5–12 HP","4,7 L","Poignées chauffantes, barre DEL, servodirection"],
+    ["2X 28 HD IntelliPower","31AH5LVNB10","28 po","420 cc","est. 12–14 HP","4,7 L","Admission 23 po, moteur 420"],
+    ["2X 30 HD IntelliPower","31AH5LVOB10","30 po","420 cc","est. 12–14 HP","4,7 L","Admission 23 po, moteur 420"],
+    ["3X 30 HD","31AH5LVZB10","30 po","420 cc","est. 12–14 HP","4,7 L","3 phases, moteur 420"],
+    ["3X 30 TRAC IntelliPower","31AH7LVZB10","30 po","420 cc","est. 12–14 HP","4,7 L","3 phases à chenilles"],
+    ["3X 34 MAX H IntelliPower EFI","31AH8M4VB10","34 po","420 cc EFI","est. 12–14 HP","4,7 L","Le plus large des Cub Cadet, EFI"]
+  ],
+  cards:[
+    ["1X 21 LHP","31PM2T6C710","1X · 21 po · 1 phase","model-cubcadet-1x-21-lhp.jpg"],
+    ["2X 24 (de base)","31AS6KXRA56","2X · 24 po · sans IntelliPower",null],
+    ["2X 24 IntelliPower","31BM5HVRB10","2X · 24 po","model-cubcadet-2x-24.jpg"],
+    ["2X 26 IntelliPower","31AM5HVSB56","2X · 26 po","model-cubcadet-2x-26.jpg"],
+    ["2X 26 TRAC IntelliPower","31AH7IVSB10","2X · 26 po · chenilles","model-cubcadet-2x-26-trac.jpg"],
+    ["2X 28 IntelliPower","31AH5IVTB10","2X · 28 po","cub-2x28ip.jpg"],
+    ["3X 26 IntelliPower","31AH5JVAB10","3X · 26 po · 3 phases","model-cubcadet-3x-26.jpg"],
+    ["3X 26 TRAC IntelliPower","n.p. sur cubcadet.ca","3X · 26 po · chenilles","model-cubcadet-3x-26-trac.jpg"],
+    ["3X 28 IntelliPower","31AH5JVBB09","3X · 28 po · 3 phases","model-cubcadet-3x-28.jpg"],
+    ["2X 30 IntelliPower","31AH5JVUB10","2X · 30 po","cub-2x30ip.jpg"],
+    ["2X 30 MAX IntelliPower","31AH8JVSB10","2X MAX · 30 po","model-cubcadet-2x-30-max.jpg"],
+    ["2X 28 HD IntelliPower","31AH5LVNB10","2X HD · 28 po · 420 cc","model-cubcadet-2x-28-hd.jpg"],
+    ["2X 30 HD IntelliPower","31AH5LVOB10","2X HD · 30 po · 420 cc","cub-2x30hdip.jpg"],
+    ["3X 30 HD","31AH5LVZB10","3X HD · 30 po · 420 cc","model-cubcadet-3x-30-hd.jpg"],
+    ["3X 30 TRAC IntelliPower","31AH7LVZB10","3X · 30 po · chenilles","model-cubcadet-3x-30-trac.jpg"],
+    ["3X 34 MAX H EFI","31AH8M4VB10","3X MAX · 34 po · EFI","model-cubcadet-3x-34-max-h.jpg"]
+  ],
+  after:'<div class="note">† Le 3X 26 TRAC est offert au Canada via les concessionnaires, mais Cub Cadet ne publie pas sa page ni son numéro sur cubcadet.ca. Le 2X 30 EFI, lui, est un modèle <b>américain seulement</b> — il n\'est pas dans la gamme canadienne.</div>'
+},
+{
+  id:"ducar", name:"Ducar",
+  tagline:"La nouvelle marque (MTI Canada, entrepôt à Lévis), garantie 2 ans",
+  intro:"Pas de noms de séries : le numéro dit tout — SB + HP + largeur, « T » = chenilles. Prix = prix affichés sur ducar.ca (vente directe, assemblage en sus), à titre de repère seulement.",
+  rows:[
+    ["SB721SS — 1 phase","DUESB721SS","21 po","Loncin 196 cc","6,5 HP *","3,6 L","Rappel seulement — 549 $"],
+    ["SB721","DUESB721","21 po","Ducar 212 cc","7 HP *","3,5 L","Le 2 phases d'entrée — 849 $"],
+    ["SB724","DUESB724","24 po","Ducar 212 cc","7 HP *","3,5 L","Poignées chauffantes + phare DEL — 1 249 $"],
+    ["SB726","DUESB726","26 po","Ducar 212 cc","7 HP *","3,5 L","Goulotte en métal — 1 349 $"],
+    ["SB926T — chenilles","DUESB926T","26 po","Loncin 252 cc","9 HP *","3,5 L","Chenilles — 1 799 $"],
+    ["SB928","DUESB928","28 po","Loncin 252 cc","9 HP *","3,5 L","1 599 $"],
+    ["SB928-SE — édition spéciale","DUESB928-SE","28 po","Loncin 252 cc","9 HP *","3,5 L","Rouge/blanc/bleu, quantités limitées — 1 625 $ (dispo 5 déc. 2026)"],
+    ["SB1130","DUESB1130","30 po","Loncin 302 cc","11 HP *","3,5 L","Différentiel — 1 799 $"],
+    ["SB1130T — chenilles","DUESB1130T","30 po","Loncin 302 cc","11 HP *","3,5 L","Chenilles + différentiel — 1 949 $"],
+    ["SB1334","DUESB1334","34 po","Loncin 375 cc","13 HP *","3,5 L","Différentiel — 1 999 $"],
+    ["SB1534T — chenilles","DUESB1534T","34 po","Loncin 420 cc","15 HP *","3,5 L","Le plus puissant — 2 399 $"],
+    ["SBSO1542T — opérateur debout","DUESBSO1542T","42 po","Loncin 420 cc","15 HP *","3,5 L","Debout, hydrostatique — 5 999 $"],
+    ["PB32SB22W — 2-en-1","DUEPB32SB22W","22 po","Ducar 212 cc","7 HP *","3,5 L","Brosse rotative 32 po incluse — 1 299 $"]
+  ],
+  cards:[
+    ["SB721SS","DUESB721SS","1 phase · 21 po · 6,5 HP","ducar-duesb721ss.jpg"],
+    ["SB721","DUESB721","2 phases · 21 po · 7 HP","ducar-duesb721.jpg"],
+    ["SB724","DUESB724","2 phases · 24 po · 7 HP","ducar-duesb724.jpg"],
+    ["SB726","DUESB726","2 phases · 26 po · 7 HP","ducar-duesb726.jpg"],
+    ["SB926T","DUESB926T","2 phases · 26 po · chenilles · 9 HP","ducar-duesb926t.jpg"],
+    ["SB928","DUESB928","2 phases · 28 po · 9 HP","ducar-duesb928.jpg"],
+    ["SB928-SE — édition spéciale","DUESB928-SE","2 phases · 28 po · rouge/blanc/bleu","ducar-duesb928-se.jpg"],
+    ["SB1130","DUESB1130","2 phases · 30 po · 11 HP","ducar-duesb1130.jpg"],
+    ["SB1130T","DUESB1130T","2 phases · 30 po · chenilles · 11 HP","ducar-duesb1130t.jpg"],
+    ["SB1334","DUESB1334","2 phases · 34 po · 13 HP","ducar-duesb1334.jpg"],
+    ["SB1534T","DUESB1534T","2 phases · 34 po · chenilles · 15 HP","ducar-duesb1534t.jpg"],
+    ["SBSO1542T","DUESBSO1542T","Opérateur debout · 42 po · 15 HP","ducar-duesbso1542t.jpg"],
+    ["PB32SB22W","DUEPB32SB22W","2-en-1 · souffleuse 22 po + brosse 32 po","ducar-duepb32sb22w.jpg"],
+    ["Souffleuse pour tracteur DCS","DUEDCS-SB40","Accessoire · 40 po · pour tracteur 2 roues","ducar-duedcs-sb40.jpg"]
+  ],
+  after:'<div class="vigilance"><b>Ducar, à savoir avant de vendre :</b> garantie <b>2 ans</b> contre 3 ans ailleurs · petit réservoir uniforme de <b>3,5 L</b> même sur les gros modèles · HP publiés par Ducar mais <b>aucun couple publié</b> — à 420 cc, Ducar annonce 15 HP contre 13,1 HP publiés par Ariens en Europe, donc ne pas comparer les HP d\'une marque à l\'autre directement · poignées chauffantes et phare DEL <b>de série dès le 24 po</b> · boîtier de 22 po partout (1 po de plus que les Power Max) · accessoires officiels presque inexistants : seulement chaînes et housses. Aussi offert : la souffleuse 40 po pour tracteur DCS (DUEDCS-SB40 — 1 029 $), un accessoire, pas une machine autonome.</div>'
+}];
+
+var ACC = [
+  ["Cabine","72102600 · Premium 72104700 (Deluxe/Plat./Prof.)","127-5960 (Power Max/HD) · 139-1640 (TRX)","490-241-0032 (2X/3X)","— inexistante"],
+  ["Housse","72601400 (≤ 26 po) · 72601500 (24–36 po)","490-7466 (≤ 28 po) · 490-7415 (28–32 po)","490-290-0010 (2X/3X ≤ 30 po)","DUACOVER-SB21 (21 po) · SB24-34 (24–34 po)"],
+  ["Coupe-bancs","72406900 (Deluxe/Plat./Prof.)","38213 (Power Max) · 107-3817 (HD 28–32 po)","OEM-390-679 (2X/3X)","— inexistant"],
+  ["Patins poly","72603100 (tous les 2 phases)","38211 (Power Max/HD)","490-241-C064 (2X/3X)","— patins doubles de série"],
+  ["Poignées chauffantes (kit)","72101400 (Classic/Compact/Deluxe)","131-6460 (Power Max HD/TRX seulement)","753-08698A / 753-08824B (selon le phare)","— de série dès le SB724"],
+  ["Lumière (kit)","72104400 / 72105500 (Compact et +)","Anciens modèles seulement","Barre DEL 753-08629A (2X/3X)","— phare DEL de série"],
+  ["Chaînes","Par pneu : 13, 15 ou 16 po","Par pneu : 13, 15 ou 16 po","Par pneu : 490-241-0028 / 0029","Par pneu : 13, 15X4 ou 16X4"],
+  ["Poids avant","72406500","107-3815 (Power Max/HD)","— inexistant","— inexistant"]
+];
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function norm(s){return String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ").trim();}
+/* Liens directs vers la fiche officielle de chaque modèle, vérifiés un par un
+   le 16 novembre 2026 sur le site du fabricant (page du modèle exact, HTTP 200) :
+   Ariens — ligne « Model # » de la fiche ariens.com · Toro — fiche toro.com/en-ca
+   dont le titre porte le nom du modèle · Cub Cadet — URL canonique retournée par
+   cubcadet.ca pour le Nº exact · Ducar — fiche ducar.ca tirée du sitemap officiel.
+   Tout Nº absent de cette table reste en texte ordinaire (aucun lien deviné). */
+var DIRECT_URLS = {
+  /* Ariens — ariens.com/en-us */
+  "ariens|938036":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/path-pro/path-pro-212-electric-start",
+  "ariens|938037":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/path-pro/path-pro-212-electric-start-with-remote-chute",
+  "ariens|938035":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional-21/professional-21-remote-chute",
+  "ariens|920036":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/classic/classic-24",
+  "ariens|920034":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/compact/compact-24-with-auto-turn",
+  "ariens|920035":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/compact/compact-24-rapidtrak",
+  "ariens|921069":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-24-(1)",
+  "ariens|921070":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-28-(1)",
+  "ariens|921079":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-28-whiteout",
+  "ariens|921072":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-28-sho-(1)",
+  "ariens|921071":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-30-(1)",
+  "ariens|921049":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/deluxe/deluxe-30-efi",
+  "ariens|921066":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/platinum/platinum-great-lakes-edition-24-sho-efi",
+  "ariens|921074":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/platinum/platinum-24-sho",
+  "ariens|921073":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/platinum/platinum-28-rapidtrak-sho",
+  "ariens|921075":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/platinum/platinum-30-sho",
+  "ariens|926093":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-28",
+  "ariens|926091":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-alpine-edition-28-hydro-efi-rapidtrak",
+  "ariens|926092":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-32",
+  "ariens|926521":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-mountaineering-32-hydro-efi-rapidtrak",
+  "ariens|926520":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-kraken-32-hydro-efi-rapidtrak",
+  "ariens|926081":"https://www.ariens.com/en-us/power-equipment/snow-products/snow-blowers/professional/professional-36-hydro",
+  /* Toro — toro.com/en-ca/product/<Nº> */
+  "toro|38474":"https://www.toro.com/en-ca/product/38474",
+  "toro|38475":"https://www.toro.com/en-ca/product/38475",
+  "toro|38752":"https://www.toro.com/en-ca/product/38752",
+  "toro|38753":"https://www.toro.com/en-ca/product/38753",
+  "toro|38754":"https://www.toro.com/en-ca/product/38754",
+  "toro|38756":"https://www.toro.com/en-ca/product/38756",
+  "toro|36002":"https://www.toro.com/en-ca/product/36002",
+  "toro|37807":"https://www.toro.com/en-ca/product/37807",
+  "toro|38757":"https://www.toro.com/en-ca/product/38757",
+  "toro|38755":"https://www.toro.com/en-ca/product/38755",
+  "toro|37798":"https://www.toro.com/en-ca/product/37798",
+  "toro|36003":"https://www.toro.com/en-ca/product/36003",
+  "toro|37799":"https://www.toro.com/en-ca/product/37799",
+  "toro|37805":"https://www.toro.com/en-ca/product/37805",
+  "toro|38838":"https://www.toro.com/en-ca/product/38838",
+  "toro|38830":"https://www.toro.com/en-ca/product/38830",
+  "toro|38842":"https://www.toro.com/en-ca/product/38842",
+  "toro|38843":"https://www.toro.com/en-ca/product/38843",
+  "toro|38844":"https://www.toro.com/en-ca/product/38844",
+  "toro|38890":"https://www.toro.com/en-ca/product/38890",
+  "toro|38891":"https://www.toro.com/en-ca/product/38891",
+  "toro|39901":"https://www.toro.com/en-ca/product/39901",
+  "toro|39902":"https://www.toro.com/en-ca/product/39902",
+  "toro|39921":"https://www.toro.com/en-ca/product/39921",
+  "toro|39914":"https://www.toro.com/en-ca/product/39914",
+  "toro|39915":"https://www.toro.com/en-ca/product/39915",
+  "toro|39924":"https://www.toro.com/en-ca/product/39924",
+  "toro|39925":"https://www.toro.com/en-ca/product/39925",
+  "toro|39926":"https://www.toro.com/en-ca/product/39926",
+  "toro|39909":"https://www.toro.com/en-ca/product/39909",
+  "toro|38381":"https://www.toro.com/en-ca/product/38381",
+  /* Cub Cadet — cubcadet.ca, URL canonique du Nº exact */
+  "cub|31PM2T6C710":"https://www.cubcadet.ca/en/prior-year-models/1x-21inch-lhp-snow-blower/31PM2T6C710.html",
+  "cub|31AS6KXRA56":"https://www.cubcadet.ca/en/2x-24inch-snow-blower%C2%A0/31AS6KXRA56.html",
+  "cub|31BM5HVRB10":"https://www.cubcadet.ca/en/two-stage-snow-blowers/2x-24inch-intellipower-snow-blower%C2%A0/31BM5HVRB10.html",
+  "cub|31AM5HVSB56":"https://www.cubcadet.ca/en/two-stage-snow-blowers/2x-26inch-intellipower-snow-blower%C2%A0/31AM5HVSB56.html",
+  "cub|31AH7IVSB10":"https://www.cubcadet.ca/en/2x-26inch-trac-intellipower-snow-blower/31AH7IVSB10.html",
+  "cub|31AH5IVTB10":"https://www.cubcadet.ca/en/2x-28inch-intellipower-snow-blower/31AH5IVTB10.html",
+  "cub|31AH5JVAB10":"https://www.cubcadet.ca/en/3x-26inch-intellipower-snow-blower%C2%A0/31AH5JVAB10.html",
+  "cub|31AH5JVBB09":"https://www.cubcadet.ca/en/three-stage-snow-blowers/3x-28inch-intellipower-snow-blower%C2%A0/31AH5JVBB09.html",
+  "cub|31AH5JVUB10":"https://www.cubcadet.ca/en/two-stage-snow-blowers/2x-30inch-intellipower-snow-blower/31AH5JVUB10.html",
+  "cub|31AH8JVSB10":"https://www.cubcadet.ca/en/2x-30inch-max-intellipower-snow-blower/31AH8JVSB10.html",
+  "cub|31AH5LVNB10":"https://www.cubcadet.ca/en/two-stage-snow-blowers/2x-28inch-hd-intellipower-snow-blower/31AH5LVNB10.html",
+  "cub|31AH5LVOB10":"https://www.cubcadet.ca/en/two-stage-snow-blowers/2x-30-hd-intellipower-snow-blower/31AH5LVOB10.html",
+  "cub|31AH5LVZB10":"https://www.cubcadet.ca/en/all-snow-blowers/3x-30-hd-intellipower-snow-blower/31AH5LVZB10.html",
+  "cub|31AH7LVZB10":"https://www.cubcadet.ca/en/3x-30inch-trac-intellipower-snow-blower/31AH7LVZB10.html",
+  "cub|31AH8M4VB10":"https://www.cubcadet.ca/en/3x-34inch-max-h-intellipower-efi-snow-blower/31AH8M4VB10.html",
+  /* Ducar — ducar.ca, fiches du sitemap officiel */
+  "ducar|DUESB721SS":"https://ducar.ca/products/duesb721ss_fr",
+  "ducar|DUESB721":"https://ducar.ca/products/duesb721_fr",
+  "ducar|DUESB724":"https://ducar.ca/products/duesb724_fr",
+  "ducar|DUESB726":"https://ducar.ca/products/duesb726_fr",
+  "ducar|DUESB926T":"https://ducar.ca/products/duesb926t_fr",
+  "ducar|DUESB928":"https://ducar.ca/products/duesb928_fr",
+  "ducar|DUESB928-SE":"https://ducar.ca/products/duesb928-se_fr",
+  "ducar|DUESB1130":"https://ducar.ca/products/duesb1130_fr",
+  "ducar|DUESB1130T":"https://ducar.ca/products/duesb1130t_fr",
+  "ducar|DUESB1334":"https://ducar.ca/products/duesb1334_fr",
+  "ducar|DUESB1534T":"https://ducar.ca/products/duesb1534t_fr",
+  "ducar|DUESBSO1542T":"https://ducar.ca/products/duesbso1542t_fr",
+  "ducar|DUEPB32SB22W":"https://ducar.ca/products/duepb32sb22w_fr",
+  "ducar|DUEDCS-SB40":"https://ducar.ca/products/duedcs-sb40_fr"
+};
+function productUrl(brandId, num){
+  var raw = String(num || "").trim();
+  if (!raw || raw.toLowerCase().indexOf("n.p.") === 0 || raw.toLowerCase().indexOf("n.p. sur") === 0) return null;
+  return DIRECT_URLS[brandId + "|" + raw.toUpperCase()] || null;
+}
+function modelLinkHtml(brandId, num, label){
+  var url = productUrl(brandId, num);
+  var text = esc(label != null ? label : num);
+  if (!url) return text;
+  return '<a class="model-link" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" title="Ouvrir la fiche officielle — Nº ' + esc(num) + ' (nouvel onglet)">' + text + '</a>';
+}
+
+/* ---------- Rendu des sections ---------- */
+var host = document.getElementById("brands");
+BRANDS.forEach(function(b){
+  var sec = document.createElement("section");
+  sec.className = "brand brand-" + b.id;
+  sec.id = "sec-" + b.id;
+  sec.setAttribute("data-section", b.id);
+  var html = '<div class="brand-head"><h2>' + esc(b.name) + ' <span style="font-size:14px;font-weight:600">· ' + b.cards.length + ' machines</span></h2>'
+    + '<p class="tagline">' + esc(b.tagline) + '</p></div>'
+    + '<p class="intro">' + esc(b.intro) + '</p>'
+    + '<h3 class="bloc">Specs — ' + esc(b.name) + '</h3>'
+    + '<div class="spec-wrap"><table class="spec"><thead><tr><th>Modèle</th><th>Nº de modèle</th><th>Larg.</th><th>Moteur</th><th>Puissance</th><th>Réservoir</th><th>À retenir</th></tr></thead><tbody>';
+  b.rows.forEach(function(r){
+    html += '<tr class="js-item" data-search="' + esc(norm(r[0] + " " + r[1])) + '">'
+      + '<td class="m">' + esc(r[0]) + '</td>'
+      + '<td class="n">' + modelLinkHtml(b.id, r[1]) + '</td>'
+      + '<td class="w" data-l="Largeur">' + esc(r[2]) + '</td>'
+      + '<td data-l="Moteur">' + esc(r[3]) + '</td>'
+      + '<td class="w" data-l="Puissance">' + esc(r[4]) + '</td>'
+      + '<td class="w" data-l="Réservoir">' + esc(r[5]) + '</td>'
+      + '<td data-l="À retenir">' + esc(r[6]) + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  if (b.after) html += b.after;
+  /* Index des specs par nom et par Nº de modèle, pour la fenêtre au survol */
+  var rowByKey = {};
+  b.rows.forEach(function(r){ rowByKey[norm(r[0])] = r; rowByKey[norm(r[1])] = r; });
+  html += '<h3 class="bloc">Les ' + esc(b.name) + ' en images</h3><div class="grid">';
+  b.cards.forEach(function(c){
+    var ph = c[3]
+      ? '<div class="ph"><img src="assets/' + c[3] + '" alt="Souffleuse ' + esc(b.name) + ' ' + esc(c[0]) + '" loading="lazy"></div>'
+      : '<div class="ph ph-none">Photo officielle de ce modèle exact<br>non disponible</div>';
+    var r = rowByKey[norm(c[0])] || rowByKey[norm(c[1])];
+    var pop;
+    if (r) {
+      pop = '<div class="pop"><div class="pt">' + esc(c[0]) + ' · Nº ' + modelLinkHtml(b.id, r[1]) + '</div>'
+        + '<dl><dt>Largeur</dt><dd>' + esc(r[2]) + '</dd>'
+        + '<dt>Moteur</dt><dd>' + esc(r[3]) + '</dd>'
+        + '<dt>Puissance</dt><dd>' + esc(r[4]) + '</dd>'
+        + '<dt>Réservoir</dt><dd>' + esc(r[5]) + '</dd></dl>'
+        + (r[6] ? '<div class="pn">' + esc(r[6]) + '</div>' : '') + '</div>';
+    } else {
+      pop = '<div class="pop"><div class="pt">' + esc(c[0]) + ' · Nº ' + modelLinkHtml(b.id, c[1]) + '</div>'
+        + '<div class="pn">' + esc(c[2]) + '</div></div>';
+    }
+    html += '<article class="card js-item" tabindex="0" data-search="' + esc(norm(c[0] + " " + c[1])) + '">'
+      + ph + '<div class="txt"><div class="name">' + esc(c[0]) + '</div>'
+      + '<div class="num">Nº ' + modelLinkHtml(b.id, c[1]) + '</div>'
+      + '<div class="spec">' + esc(c[2]) + '</div></div>' + pop + '</article>';
+  });
+  html += '</div>';
+  sec.innerHTML = html;
+  host.appendChild(sec);
+});
+
+/* ---------- Rendu accessoires ---------- */
+var accBody = document.querySelector("#accTable tbody");
+ACC.forEach(function(r){
+  var tr = document.createElement("tr");
+  tr.className = "js-acc";
+  tr.setAttribute("data-search", norm(r.join(" ")));
+  tr.innerHTML = '<td class="cat">' + esc(r[0]) + '</td>'
+    + '<td class="a" data-l="Ariens">' + esc(r[1]) + '</td>'
+    + '<td class="t" data-l="Toro">' + esc(r[2]) + '</td>'
+    + '<td class="c" data-l="Cub Cadet">' + esc(r[3]) + '</td>'
+    + '<td class="d" data-l="Ducar">' + esc(r[4]) + '</td>';
+  accBody.appendChild(tr);
+});
+
+/* ---------- Recherche + onglets ---------- */
+var activeBrand = "all";
+var qInput = document.getElementById("q");
+var clearBtn = document.getElementById("clearBtn");
+var noresult = document.getElementById("noresult");
+
+function apply(){
+  var q = norm(qInput.value);
+  clearBtn.style.display = qInput.value ? "block" : "none";
+  var anyVisible = false;
+  document.querySelectorAll("[data-section]").forEach(function(sec){
+    var id = sec.getAttribute("data-section");
+    var tabOk = (activeBrand === "all" || activeBrand === id);
+    if (!tabOk) { sec.classList.add("hidden"); return; }
+    if (id === "acc") {
+      var accAny = false;
+      sec.querySelectorAll(".js-acc").forEach(function(row){
+        var ok = !q || row.getAttribute("data-search").indexOf(q) !== -1;
+        row.classList.toggle("hidden", !ok);
+        if (ok) accAny = true;
+      });
+      var showAcc = q ? accAny : true;
+      sec.classList.toggle("hidden", !showAcc);
+      if (showAcc) anyVisible = true;
+      return;
+    }
+    var secAny = false;
+    sec.querySelectorAll(".js-item").forEach(function(item){
+      var ok = !q || item.getAttribute("data-search").indexOf(q) !== -1;
+      item.classList.toggle("hidden", !ok);
+      if (ok) secAny = true;
+    });
+    sec.classList.toggle("hidden", q ? !secAny : false);
+    if (secAny || !q) anyVisible = true;
+  });
+  noresult.classList.toggle("show", !!q && !anyVisible);
+}
+qInput.addEventListener("input", apply);
+clearBtn.addEventListener("click", function(){ qInput.value = ""; apply(); qInput.focus(); });
+document.getElementById("tabs").addEventListener("click", function(e){
+  var btn = e.target.closest(".tab");
+  if (!btn) return;
+  activeBrand = btn.getAttribute("data-brand");
+  document.querySelectorAll(".tab").forEach(function(t){ t.setAttribute("aria-pressed", t === btn ? "true" : "false"); });
+  apply();
+  var target = activeBrand === "all" ? null : document.getElementById("sec-" + activeBrand);
+  if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
+});
+apply();
+
+/* Bouton « Retour au portail » : lien ordinaire (href dans le HTML ci-dessus) avec
+   target="_blank" : le portail s'ouvre dans un nouvel onglet, au niveau supérieur, au lieu
+   de se charger dans le cadre imbriqué actuel — les cadres ne s'empilent plus au fil des
+   allers-retours entre plateformes. Aucun gestionnaire de clic : le clic natif du lien est
+   le seul mécanisme de navigation. */
+
+/* Sur cellulaire (pas de survol) : toucher une carte ouvre/ferme sa fenêtre de specs */
+document.getElementById("brands").addEventListener("click", function(e){
+  if (e.target.closest("a")) return;
+  var card = e.target.closest(".card");
+  if (!card) return;
+  var wasOpen = card.classList.contains("open");
+  document.querySelectorAll(".card.open").forEach(function(c){ c.classList.remove("open"); });
+  if (!wasOpen) card.classList.add("open");
+});
+</script>
+</body>
+</html>
