@@ -17744,9 +17744,22 @@ initCompare(); initTorque(); initChain(); initChainXover(); initChainTips(); ini
 initBatTabs();
 var regBtn = document.getElementById("regRun");
 if(regBtn) regBtn.addEventListener("click", runRegression);
-/* Différée : la page s'affiche d'abord, la batterie remplit son panneau
-   juste après — elle ne doit jamais retarder le premier affichage. */
-setTimeout(runRegression, 60);
+/* Batterie automatique SEULEMENT à la première ouverture d'une nouvelle
+   version (décision d'Alain, 2026-11-20) : ses 144 tests synchrones
+   gelaient la page 4-6 s à CHAQUE ouverture. REG_VERSION doit être
+   incrémentée à chaque mise à jour de la plateforme, sinon la batterie
+   ne se relancera pas toute seule. Le bouton 🧪 la lance à la main en
+   tout temps. Si le stockage local est illisible, elle roule quand
+   même : le filet de sécurité prime sur la vitesse. */
+var REG_VERSION = "2026-11-20.1";
+var regStored = null, regStorageOk = true;
+try { regStored = localStorage.getItem("pnsRegVersion"); } catch(e){ regStorageOk = false; }
+if(!regStorageOk || regStored !== REG_VERSION){
+  setTimeout(function(){
+    runRegression();
+    try { localStorage.setItem("pnsRegVersion", REG_VERSION); } catch(e){}
+  }, 60);
+}
 </script>
 <script>
 "use strict";
